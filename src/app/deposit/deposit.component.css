@@ -1,0 +1,26 @@
+form{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    justify-content: space-evenly;
+    input{
+        height: 50px;
+    width: 250px;
+    border-radius: 15px;
+    border: solid 1px gray;
+    box-shadow: 2px 2px 7px black;
+    font-size: 20px;
+    text-align: center;
+    }
+    button{
+        height: 40px;
+    width: 120px;
+    border-radius: 25px;
+    border: 1px solid;
+    box-shadow: 2px 2px 7px black;
+    background: green;
+    }
+}

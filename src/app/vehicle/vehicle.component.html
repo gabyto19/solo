@@ -1,0 +1,15 @@
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <input id="name" [(ngModel)]="formData.name" name="name" required placeholder="სახელი, გვარი, ID "/>
+    </div>
+    <div>
+      <input id="lastName" [(ngModel)]="formData.lastName" name="lastName" required placeholder="მანქანის მოდელი"/>
+    </div>
+    <div>
+      <input id="vinCode" [(ngModel)]="formData.vinCode" name="vinCode" required placeholder="ვინ კოდი"/>
+    </div>
+    <div>
+      <input id="amount" [(ngModel)]="formData.amount" name="amount" required placeholder="თანხა"/>
+    </div>
+    <button type="submit">შესრულება</button>
+  </form>

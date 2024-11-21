@@ -1,0 +1,9 @@
+<form (ngSubmit)="onSubmit()" #form="ngForm">
+  <input type="text" id="name" [(ngModel)]="formData.name" name="name" required placeholder="სახელი და გვარი" />
+
+  <input type="email" id="email" [(ngModel)]="formData.email" name="email" required placeholder="პირადი ნომერი"/>
+
+  <input id="message" [(ngModel)]="formData.message" name="message" required placeholder="დეპოზიტის რაოდენობა"/>
+
+  <button type="submit">შესრულება</button>
+</form>

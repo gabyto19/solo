@@ -1,7 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DepositComponent } from './deposit/deposit.component';
+import { VehicleComponent } from './vehicle/vehicle.component';
+import { ListComponent } from './list/list.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: '', component: DepositComponent },
+  { path: 'deposit', component: DepositComponent }, 
+  { path: 'vehicle', component: VehicleComponent }, 
+  { path: 'list', component: ListComponent }, 
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

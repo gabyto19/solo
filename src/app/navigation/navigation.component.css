@@ -1,0 +1,12 @@
+img{
+    height: 70px;
+}
+div button{
+    height: 40px;
+    width: 100px;
+    margin-left: 20px;
+    border-radius: 15px;
+    border: none;
+    box-shadow: 2px 2px 7px black;
+    
+}
