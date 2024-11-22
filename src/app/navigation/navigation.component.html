@@ -1,6 +1,20 @@
-<img src="/assets/imgs/logo.png" alt="">
-<div>
-    <button routerLink="/deposit">დეპოზიტი</button>
-    <button routerLink="/vehicle">საფასური</button>
-    <button routerLink="/list">ფასები</button>
+<img src="/assets/imgs/logo.png" alt="Logo">
+<div class="menu-container">
+  <button routerLink="/deposit">დეპოზიტი</button>
+  <button routerLink="/vehicle">საფასური</button>
+  <button routerLink="/list">ფასები</button>
+</div>
+
+<!-- Burger Menu for Mobile -->
+<div class="burger-menu" (click)="toggleMenu()">
+  <div class="burger-line"></div>
+  <div class="burger-line"></div>
+  <div class="burger-line"></div>
+</div>
+
+<!-- Mobile menu links -->
+<div class="mobile-menu" [ngClass]="{ 'active': menuOpen }">
+  <button routerLink="/deposit">დეპოზიტი</button>
+  <button routerLink="/vehicle">საფასური</button>
+  <button routerLink="/list">ფასები</button>
 </div>

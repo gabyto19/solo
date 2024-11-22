@@ -1,12 +1,62 @@
-img{
-    height: 70px;
+/* General styles */
+img {
+  height: 70px;
 }
-div button{
-    height: 40px;
-    width: 100px;
-    margin-left: 20px;
-    border-radius: 15px;
-    border: none;
-    box-shadow: 2px 2px 7px black;
-    
+
+div button {
+  height: 40px;
+  width: 100px;
+  margin-left: 20px;
+  border-radius: 15px;
+  border: none;
+  box-shadow: 2px 2px 7px black;
+}
+
+/* Mobile menu styles */
+.burger-menu {
+  display: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.burger-line {
+  background-color: black;
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+}
+
+/* Mobile menu */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 80px;
+  right: 0px;
+  padding: 20px;
+  z-index: 100;
+}
+
+.mobile-menu button {
+  margin: 10px 0;
+}
+
+/* Show the mobile menu when active */
+.mobile-menu.active {
+  display: flex;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .menu-container {
+    display: none; /* Hide default menu on mobile */
+  }
+
+  .burger-menu {
+    display: flex; /* Show burger menu on mobile */
+  }
 }
