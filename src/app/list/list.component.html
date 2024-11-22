@@ -1,1 +1,13 @@
-<p>list works!</p>
+
+<div class="search-container">
+    <!-- Input field to type search query -->
+    <input type="text" (input)="onInputChange($event)" placeholder="შეიყვანეთ შტატი" class="search-input">
+    
+    <!-- Listbox to display filtered results -->
+    <ul class="state-list">
+        <li *ngIf="filteredStates.length === 0">No results found</li>
+        <li *ngFor="let state of filteredStates">{{ state }}</li>
+      </ul>
+      
+</div>
+  

@@ -8,6 +8,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { DepositComponent } from './deposit/deposit.component';
 import { VehicleComponent } from './vehicle/vehicle.component';
 import { ListComponent } from './list/list.component';
+import { PasswordComponent } from './password/password.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { ListComponent } from './list/list.component';
     NavigationComponent,
     DepositComponent,
     VehicleComponent,
-    ListComponent
+    ListComponent,
+    PasswordComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,44 @@
+.search-container {
+    margin: 20px;
+  }
+  
+  .search-input {
+    width: 94%;
+    padding: 8px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .state-list {
+    list-style-type: none;
+    padding: 0;
+    max-height: 300px; /* Adjust the height as needed */
+    max-width: 100%;
+    overflow-y: scroll; /* Keeps scrolling enabled */
+  }
+  
+  /* For WebKit browsers (Chrome, Safari, etc.) */
+  .state-list::-webkit-scrollbar {
+    width: 0;  /* Hides the scrollbar */
+    height: 0;
+  }
+  
+  /* For Firefox */
+  .state-list {
+    scrollbar-width: none; /* Hides the scrollbar */
+  }
+  
+  /* Styling for the items */
+  .state-list li {
+    padding: 5px;
+    font-size: 16px;
+    background-color: #f0f0f0;
+    padding-top: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    text-align: center;
+    height: 25px;
+    font-family: sans-serif;
+  }
+  
