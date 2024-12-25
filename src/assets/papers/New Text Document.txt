@@ -66,7 +66,6 @@ states_prices = {
 "CA  Las Vegas - NV(COPART)": 2650,
 "CA  LONG BEACH - CA(COPART)": 2550,
 "CA  Los Angeles - CA(COPART)": 2550,
-"CA  Martinez - CA(COPART)": 2650,
 "CA  OGDEN - UT(COPART)": 2720,
 "Canada  Hamilton - ON(COPART)": 2440,
 "Canada  Halifax - ON(COPART)": 3290,
