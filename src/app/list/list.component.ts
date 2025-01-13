@@ -46,6 +46,7 @@ statesPrices:any = {
 "GA  Columbia - SC(COPART)": 2080,
 "GA  Concord - NC(COPART)": 2150,
 "GA  Dothan - AL(COPART)": 2250,
+"GA  Charlotte - NC(IAAI)": 2150,
 "NJ  Cleveland East - OH(COPART)": 2140,
 "NJ  Cleveland West - OH(COPART)": 2140,
 "NJ  Columbia - MO(COPART)": 2240,
