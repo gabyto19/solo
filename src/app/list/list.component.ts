@@ -225,6 +225,7 @@ statesPrices:any = {
 "NJ  Wichita - KS(COPART)": 2360,
 "NJ  Windham - ME(COPART)": 2150,
 "NJ  York Haven - PA(COPART)": 1980,
+"PA ashfasf -pa(copart)": 2184,
 "TX  Tulsa - OK(COPART)": 2300,
 "TX  WACO  - TX(COPART)": 2140,
 "WA  Spokane - WA(COPART)": 3080,
