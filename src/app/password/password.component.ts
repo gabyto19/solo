@@ -14,7 +14,7 @@ export class PasswordComponent {
   constructor(private router: Router) {}
 
   onSubmit() {
-    if (this.password === 'DTMS!') { // Replace with your actual password
+    if (this.password === 'VincGatexosImasSheveci123$') { // Replace with your actual password
       sessionStorage.setItem('password', this.password); // Store password in sessionStorage
       this.router.navigate(['/deposit']); // Redirect to deposit page
     } else {

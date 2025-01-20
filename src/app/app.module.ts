@@ -15,6 +15,7 @@ import { DepositComponent } from './deposit/deposit.component';
 import { VehicleComponent } from './vehicle/vehicle.component';
 import { ListComponent } from './list/list.component';
 import { PasswordComponent } from './password/password.component';
+import { PdfEditorComponent } from './pdf-editor/pdf-editor.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { PasswordComponent } from './password/password.component';
     DepositComponent,
     VehicleComponent,
     ListComponent,
-    PasswordComponent
+    PasswordComponent,
+    PdfEditorComponent
   ],
   imports: [
     BrowserModule,
