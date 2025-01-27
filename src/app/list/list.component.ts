@@ -193,7 +193,7 @@ statesPrices:any = {
 "CA  South Sacramento - CA(COPART)": 2650,
 "NJ  Somerville - NJ(COPART)": 1860,
 "NJ  South Boston - MA(COPART)": 1970,
-"NJ  SOUTHERN ILINOIS - IL(COPART)": 2220,
+"NJ  SOUTHERN ILINOIS - IL(COPART)": 2350,
 "CA  Phoenix - AZ(COPART)": 2650,
 "CA  Sun Valley - CA(COPART)": 2550,
 "CA  Tucson - AZ(COPART)": 2650,
