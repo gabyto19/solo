@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
 export class ListComponent {
 // List of states with corresponding prices
 statesPrices:any = {
-"CA  ADELANTO - CA(COPART)": 2550,
+"CA  ADELANTO - CA(COPART)": 2551,
 "CA  ANTELOPE - CA(COPART)": 2700,
 "CA  Bakersfield - CA(COPART)": 2600,
 "GA  Atlanta East - GA(COPART)": 2125,
