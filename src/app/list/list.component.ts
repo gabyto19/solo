@@ -69,7 +69,7 @@ statesPrices:any = {
 "TX  Dallas South - TX(COPART)": 2120,
 "TX  El Paso - TX(COPART)": 2290,
 "WA  Eugene - OR(COPART)": 2940,
-"Huntsville (AL)": 2265,
+"AL Huntsville": 2265,
 "-  Honolulu - HI(COPART)": 3475,
 "CA  Fresno - CA(COPART)": 2695,
 "CA  Hayward - CA(COPART)": 2700,
