@@ -78,6 +78,7 @@ statesPrices:any = {
 "CA  LONG BEACH - CA(COPART)": 2550,
 "CA  Los Angeles - CA(COPART)": 2590,
 "CA  OGDEN - UT(COPART)": 2720,
+"Southern Illinois (IL)": 2350,
 "Canada  Hamilton - ON(COPART)": 2440,
 "Canada  Halifax - ON(COPART)": 3290,
 "Canada  Kitchener  - ON(COPART)": 2465,
