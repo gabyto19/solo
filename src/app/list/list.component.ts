@@ -111,7 +111,7 @@ statesPrices:any = {
 "GA  Montgomery - AL(COPART)": 2330,
 "GA  Nashville - TN(COPART)": 2190,
 "GA  North Charleston - SC(COPART)": 2150,
-"NJ  Flint - MI(COPART)": 2330,
+"NJ  Flint - MI(COPART)": 2280,
 "NJ  Fort Wayne - IN(COPART)": 2220,
 "NJ  FREDERICKSBURG - VA(COPART)": 2040,
 "NJ  Freetown - MA(COPART)": 2090,
