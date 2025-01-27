@@ -45,6 +45,7 @@ statesPrices:any = {
 "GA  China Grove - NC(COPART)": 2050,
 "GA  Columbia - SC(COPART)": 2080,
 "GA  Concord - NC(COPART)": 2150,
+"Suffolk (VA)": 2065,
 "GA  Dothan - AL(COPART)": 2250,
 "GA  Charlotte - NC(IAAI)": 2150,
 "NJ  Cleveland East - OH(COPART)": 2140,
