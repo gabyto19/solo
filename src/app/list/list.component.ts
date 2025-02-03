@@ -112,7 +112,7 @@ statesPrices:any = {
 "GA  MOCKSVILLE - NC(COPART)": 2095,
 "GA  Montgomery - AL(COPART)": 2330,
 "GA  Nashville - TN(COPART)": 2190,
-"GA  North Charleston - SC(COPART)": 2150,
+"GA  North Charleston - SC(COPART)": 2090,
 "NJ  Flint - MI(COPART)": 2280,
 "NJ  Fort Wayne - IN(COPART)": 2220,
 "NJ  FREDERICKSBURG - VA(COPART)": 2040,
