@@ -55,6 +55,7 @@ statesPrices:any = {
 "NJ  Danville - VA(COPART)": 2130,
 "NJ  Davenport-IA(COPART)": 2270,
 "NJ  Dayton - OH(COPART)": 2170,
+"North Hollywood (CA)": 2685,
 "NJ  Denver - CO(COPART)": 2595,
 "NJ  Denver Central - CO(COPART)": 2595,
 "NJ  Denver South - CO(COPART)": 2595,
