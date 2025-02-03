@@ -197,7 +197,7 @@ statesPrices:any = {
 "NJ  SOUTHERN ILINOIS - IL(COPART)": 2350,
 "CA  Phoenix - AZ(COPART)": 2650,
 "CA  Sun Valley - CA(COPART)": 2550,
-"CA  Tucson - AZ(COPART)": 2650,
+"CA  Tucson - AZ(COPART)": 2960,
 "CA  Vallejo - CA(COPART)": 2650,
 "CA  Van Nuys - CA(COPART)": 2550,
 "Canada  St Hubert  - ON(COPART)": 3190,
