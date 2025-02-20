@@ -234,6 +234,7 @@ statesPrices:any = {
 "TX  WACO  - TX(COPART)": 2140,
 "WA  Spokane - WA(COPART)": 3080,
 "WA  Woodburn - OR(COPART)": 2900,
+"LA SHREVEPORT - LA(COPART)": 2270$,
 };
 
 // List to hold filtered results
