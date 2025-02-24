@@ -32,7 +32,7 @@ statesPrices:any = {
 "CA  Casper - WY(COPART)": 3100,
 "Canada  Calgary - AB(COPART)": 3490,
 "GA  Cartersville - GA(COPART)": 2150,
-"NJ  BUFFALO  - NY(COPART)": 2165,
+"NJ  BUFFALO  - NY(COPART)": 2280,
 "NJ  Candia - NH(COPART)": 2070,
 "NJ  Chambersburg - PA(COPART)": 2060,
 "NJ  Charleston - WV(COPART)": 2160,
