@@ -37,7 +37,7 @@ statesPrices:any = {
 "NJ  Chambersburg - PA(COPART)": 2060,
 "NJ  Charleston - WV(COPART)": 2160,
 "NJ  Chicago North - IL(COPART)": 2290,
-"NJ  Chicago South - IL(COPART)": 2200,
+"NJ  Chicago South - IL(COPART)": 2290,
 "NJ  CICERO - IN(COPART)": 2230,
 "WA  Boise -ID(COPART)": 2940,
 "Canada  Cincutimi - ON(COPART)": 3190,
