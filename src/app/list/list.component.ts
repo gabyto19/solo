@@ -136,7 +136,7 @@ statesPrices:any = {
 "NJ  Lexington West - KY(COPART)": 2240,
 "NJ  Lincoln - NE(COPART)": 2320,
 "NJ  Long Island - NY(COPART)": 1940,
-"NJ  Louisville - KY(COPART)": 2270,
+"NJ  Louisville - KY(COPART)": 2300,
 "NJ  Lyman, ME(COPART)": 2210,
 "NJ  Madison -WI(COPART)": 2390,
 "NJ  Milwaukee - WI(COPART)": 2370,
