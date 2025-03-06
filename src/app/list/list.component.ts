@@ -144,7 +144,7 @@ statesPrices:any = {
 "NJ  Minneapolis North - MN(COPART)": 2255,
 "NJ  Newburgh - NY(COPART)": 1930,
 "NJ  North Boston - MA(COPART)": 1990,
-"NJ  Peoria - IL(COPART)": 2215,
+"NJ  Peoria - IL(COPART)": 2300,
 "NJ  Philadelphia - PA(COPART)": 1910,
 "NJ  Philadelphia East- PA(COPART)": 1910,
 "TX  Fayetteville - AR(COPART)": 2330,
