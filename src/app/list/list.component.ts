@@ -141,7 +141,7 @@ statesPrices:any = {
 "NJ  Madison -WI(COPART)": 2390,
 "NJ  Milwaukee - WI(COPART)": 2370,
 "NJ  Minneapolis - MN(COPART)": 2255,
-"NJ  Minneapolis North - MN(COPART)": 2255,
+"NJ  Minneapolis North - MN(COPART)": 2340,
 "NJ  Newburgh - NY(COPART)": 1930,
 "NJ  North Boston - MA(COPART)": 1990,
 "NJ  Peoria - IL(COPART)": 2300,
