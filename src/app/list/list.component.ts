@@ -42,7 +42,7 @@ statesPrices:any = {
 "WA  Boise -ID(COPART)": 2940,
 "Canada  Cincutimi - ON(COPART)": 3190,
 "Canada  Edmonton - ON(COPART)": 3490,
-"GA  China Grove - NC(COPART)": 2050,
+"GA  China Grove - NC(COPART)": 2105,
 "GA  Columbia - SC(COPART)": 2080,
 "GA  Concord - NC(COPART)": 2150,
 "Suffolk (VA)": 2065,
