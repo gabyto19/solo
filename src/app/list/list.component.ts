@@ -184,7 +184,7 @@ statesPrices:any = {
 "NJ  Pittsburgh South - PA(COPART)": 2090,
 "NJ  Richmond - VA(COPART)": 2090,
 "NJ  Richmond East - VA(COPART)": 2135,
-"NJ  Rochester - NY(COPART)": 2060,
+"NJ  Rochester - NY(COPART)": 2090,
 "NJ  Scranton - PA(COPART)": 1990,
 "NJ  Seaford - DE(COPART)": 2000,
 "NJ  Sikeston - MO(COPART)": 2320,
