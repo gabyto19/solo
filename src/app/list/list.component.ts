@@ -140,7 +140,7 @@ statesPrices:any = {
 "NJ  Lyman, ME(COPART)": 2210,
 "NJ  Madison -WI(COPART)": 2390,
 "NJ  Milwaukee - WI(COPART)": 2370,
-"NJ  Minneapolis - MN(COPART)": 2255,
+"NJ  Minneapolis - MN(COPART)": 2480,
 "NJ  Minneapolis North - MN(COPART)": 2340,
 "NJ  Newburgh - NY(COPART)": 1930,
 "NJ  North Boston - MA(COPART)": 1990,
