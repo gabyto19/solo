@@ -156,7 +156,7 @@ statesPrices:any = {
 "TX  Longview - TX(COPART)": 2190,
 "TX  Lufkin - TX(COPART)": 2130,
 "TX  Mcallen - TX(COPART)": 2180,
-"TX  New Orleans - LA(COPART)": 2180,
+"TX  New Orleans - LA(COPART)": 2260,
 "TX  Oklahoma City - OK(COPART)": 2370,
 "WA  Graham - WA(COPART)": 2855,
 "WA  North Seattle - WA(COPART)": 2830,
