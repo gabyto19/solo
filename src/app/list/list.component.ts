@@ -103,7 +103,7 @@ statesPrices:any = {
 "GA  FAIRBURN - GA(COPART)": 1990,
 "GA  Gastonia - NC(COPART)": 2100,
 "GA  Greer - SC(COPART)": 2120,
-"GA  Knoxville - TN(COPART)": 2250,
+"GA  Knoxville - TN(COPART)": 2265,
 "GA  Lumberton - NC(COPART)": 2040,
 "GA  MACON - GA(COPART)": 2050,
 "GA  Mebane - NC(COPART)": 1995,
