@@ -215,7 +215,7 @@ statesPrices:any = {
 "FL  Tallahassee - FL(COPART)": 2180,
 "FL  West Palm Beach - FL(COPART)": 2090,
 "GA  SPARTANBURG - SC(COPART)": 2100,
-"GA  Springfield - MO(COPART)": 2250,
+"GA  Springfield - MO(COPART)": 2520,
 "GA  Tanner - AL(COPART)": 2240,
 "GA  Tifton - GA(COPART)": 2150,
 "NJ  St. Cloud - MN(COPART)": 2240,
