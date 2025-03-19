@@ -24,7 +24,7 @@ statesPrices:any = {
 "NJ  Batltimore EAST - MD(COPART)": 1995,
 "NJ  Billings - MT(COPART)": 3020,
 "TX  Abilene - TX(COPART)": 2240,
-"TX  Albuquerque - NM(COPART)": 2480,
+"TX  Albuquerque - NM(COPART)": 2710,
 "TX  Amarillo - TX(COPART)": 2330,
 "TX  Andrews - TX(COPART)": 2200,
 "TX  Austin - TX(COPART)": 2140,
