@@ -109,7 +109,6 @@ statesPrices:any = {
 "GA  Mebane - NC(COPART)": 1995,
 "GA  Memphis - TN(COPART)": 2350,
 "GA  Mobile - AL(COPART)": 2295,
-"GA  Mobile South - AL(COPART)": 2310,
 "GA  MOCKSVILLE - NC(COPART)": 2095,
 "GA  Montgomery - AL(COPART)": 2330,
 "GA  Nashville - TN(COPART)": 2290,
