@@ -226,7 +226,7 @@ statesPrices:any = {
 "NJ  Washington DC - DC(COPART)": 1960,
 "NJ  West Warren - MA(COPART)": 1980,
 "NJ  Wheeling - IL(COPART)": 2120,
-"NJ  Wichita - KS(COPART)": 2770,
+"NJ  Wichita - KS(COPART)": 2695,
 "NJ  Windham - ME(COPART)": 2150,
 "NJ  York Haven - PA(COPART)": 1980,
 "TX  Tulsa - OK(COPART)": 2300,
