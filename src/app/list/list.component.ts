@@ -234,6 +234,7 @@ statesPrices:any = {
 "WA  Spokane - WA(COPART)": 3080,
 "WA  Woodburn - OR(COPART)": 2900,
 "LA SHREVEPORT - LA(COPART)": 2270,
+"TX  Houston North - TX(COPART)": 2180,
 };
 
 // List to hold filtered results
