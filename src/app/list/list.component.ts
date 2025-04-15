@@ -220,7 +220,7 @@ statesPrices:any = {
 "NJ  St. Cloud - MN(COPART)": 2240,
 "NJ  St. Louis - MO(COPART)": 2260,
 "NJ  Syracuse - NY(COPART)": 2020,
-"Wilmington (NC)": 2230,
+"Wilmington (NC)": 2280,
 "NJ  Trenton - NJ(COPART)": 1850,
 "NJ  Walton - KY(COPART)": 2310,
 "NJ  Washington DC - DC(COPART)": 1960,
