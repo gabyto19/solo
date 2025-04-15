@@ -210,7 +210,7 @@ statesPrices:any = {
 "Canada  Winchester - ON(COPART)": 2625,
 "Canada  Winnipeg - ON(COPART)": 3465,
 "FL  Talahassee - FL(COPART)": 2220,
-"FL  Tampa South - FL(COPART)": 2115,
+"FL  Tampa South - FL(COPART)": 2190,
 "FL  Tallahassee - FL(COPART)": 2180,
 "FL  West Palm Beach - FL(COPART)": 2090,
 "GA  SPARTANBURG - SC(COPART)": 2100,
