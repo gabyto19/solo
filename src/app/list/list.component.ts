@@ -52,7 +52,7 @@ statesPrices:any = {
 "NJ  Cleveland West - OH(COPART)": 2140,
 "NJ  Columbia - MO(COPART)": 2240,
 "NJ  Columbus - OH(COPART)": 2150,
-"NJ  Danville - VA(COPART)": 2130,
+"NJ  Danville - VA(COPART)": 2315,
 "NJ  Davenport-IA(COPART)": 2270,
 "NJ  Dayton - OH(COPART)": 2170,
 "North Hollywood (CA)": 2685,
