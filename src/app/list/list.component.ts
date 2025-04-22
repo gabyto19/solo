@@ -117,7 +117,7 @@ statesPrices:any = {
 "NJ  Fort Wayne - IN(COPART)": 2220,
 "NJ  FREDERICKSBURG - VA(COPART)": 2040,
 "NJ  Freetown - MA(COPART)": 2090,
-"NJ  Glassboro East - NJ(COPART)": 1900,
+"NJ  Glassboro East - NJ(COPART)": 1950,
 "NJ  Glassboro West - NJ(COPART)": 1900,
 "NJ  Hammond - IN(COPART)": 2180,
 "NJ  Hampton - VA(COPART)": 2085,
