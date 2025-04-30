@@ -18,7 +18,7 @@ statesPrices:any = {
 "GA  Augusta - GA(COPART)": 2050,
 "GA  Birmingham - AL(COPART)": 2270,
 "NJ  Albany - NY(COPART)": 1980,
-"NJ  Altoona - PA(COPART)": 2070,
+"NJ  Altoona - PA(COPART)": 214,
 "NJ  Appleton - WI(COPART)": 2370,
 "NJ  Baltimore - MD(COPART)": 1995,
 "NJ  Batltimore EAST - MD(COPART)": 1995,
