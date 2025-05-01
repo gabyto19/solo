@@ -67,7 +67,7 @@ statesPrices:any = {
 "NJ  EXETER - RI(COPART)": 1990,
 "TX  Colorado Springs - CO(COPART)": 2550,
 "TX  Corpus Christi - TX(COPART)": 2150,
-"TX  Dallas - TX(COPART)": 2120,
+"TX  Dallas - TX(COPART)": 2245,
 "TX  Dallas South - TX(COPART)": 2120,
 "TX  El Paso - TX(COPART)": 2290,
 "WA  Eugene - OR(COPART)": 2940,
