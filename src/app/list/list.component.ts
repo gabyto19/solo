@@ -174,7 +174,7 @@ statesPrices:any = {
 "Canada  Quebec City  - ON(COPART)": 2790,
 "Canada  Regina - SK(COPART)": 3490,
 "Canada  Saskatoon - SK(COPART)": 3490,
-"FL  Punta Gorda - FL(COPART)": 2050,
+"FL  Punta Gorda - FL(COPART)": 2085,
 "GA  Raleigh - NC(COPART)": 2130,
 "GA  Raleigh North - NC(COPART)": 2130,
 "GA  Savannah - GA(COPART)": 1920,
