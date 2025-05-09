@@ -77,7 +77,7 @@ statesPrices:any = {
 "CA  Hayward - CA(COPART)": 2700,
 "CA  Helena - MT(COPART)": 3100,
 "CA  Las Vegas - NV(COPART)": 2650,
-"CA  LONG BEACH - CA(COPART)": 2550,
+"CA  LONG BEACH - CA(COPART)": 2665,
 "CA  Los Angeles - CA(COPART)": 2590,
 "CA  OGDEN - UT(COPART)": 2720,
 "Southern Illinois (IL)": 2350,
