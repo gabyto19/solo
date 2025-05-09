@@ -94,7 +94,7 @@ statesPrices:any = {
 "FL  Jacksonville West - FL(COPART)": 2015,
 "FL  Jacksonville North - FL(COPART)": 2015,
 "FL  Miami Central - FL(COPART)": 2050,
-"FL  Miami North - FL(COPART)": 2050,
+"FL  Miami North - FL(COPART)": 2060,
 "FL  Miami South  - FL(COPART)": 2050,
 "FL  Ocala - FL(COPART)": 2075,
 "FL  Orlando - FL(COPART)": 1965,
