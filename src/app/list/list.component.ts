@@ -198,7 +198,7 @@ statesPrices:any = {
 "CA  Phoenix - AZ(COPART)": 2650,
 "CA  Sun Valley - CA(COPART)": 2630,
 "CA  Tucson - AZ(COPART)": 2960,
-"CA  Vallejo - CA(COPART)": 2650,
+"CA  Vallejo - CA(COPART)": 2845,
 "CA  Van Nuys - CA(COPART)": 2550,
 "Canada  St Hubert  - ON(COPART)": 3190,
 "Canada  St Philibert(COPART)": 3040,
