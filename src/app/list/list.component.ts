@@ -96,7 +96,7 @@ statesPrices:any = {
 "FL  Miami Central - FL(COPART)": 2050,
 "FL  Miami North - FL(COPART)": 2060,
 "FL  Miami South  - FL(COPART)": 2050,
-"FL  Ocala - FL(COPART)": 2075,
+"FL  Ocala - FL(COPART)": 2220,
 "FL  Orlando - FL(COPART)": 1965,
 "FL  Orlando North - FL(COPART)": 1965,
 "FL  Orlando South - FL(COPART)": 1965,
