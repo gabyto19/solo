@@ -33,14 +33,14 @@ export class PdfEditorComponent {
     const image = await pdfDoc.embedPng(imageBytes); // Use embedJpg for JPEGs
     const imageDims = image.scale(0.4); // Adjust scaling as needed
 
-   
-    firstPage.drawRectangle({
-      x: 0,
-      y: 720,
-      width: firstPage.getWidth(),
-      height: firstPage.getHeight(),
-      color: rgb(1, 1, 1), // White background
-    });
+    // white background under the logo
+    // firstPage.drawRectangle({
+    //   x: 0,
+    //   y: 720,
+    //   width: firstPage.getWidth(),
+    //   height: firstPage.getHeight(),
+    //   color: rgb(1, 1, 1), // White background
+    // });
 
      // Draw the image
      firstPage.drawImage(image, {
@@ -52,8 +52,8 @@ export class PdfEditorComponent {
     // Draw the white rectangle
     firstPage.drawRectangle({
       x: 10,
-      y: 452,
-      width: 50,
+      y: 447,
+      width: 80,
       height: 14,
       color: rgb(1, 1, 1), // White background
     });
