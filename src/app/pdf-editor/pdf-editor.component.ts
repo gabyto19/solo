@@ -45,7 +45,7 @@ export class PdfEditorComponent {
      // Draw the image
      firstPage.drawImage(image, {
       x: 0,
-      y: 720, // Adjust the Y-coordinate to position it above the rectangle
+      y: 740, // Adjust the Y-coordinate to position it above the rectangle
       width: imageDims.width,
       height: imageDims.height,
     });
