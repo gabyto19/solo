@@ -8,9 +8,7 @@ import { Component } from '@angular/core';
 export class ListComponent {
 // List of states with corresponding prices
 statesPrices:any = {
-Here’s the data with 775 added to each number:
 
-```json
 "AL-MOBILE": 2200,
 "AL-MOBILE SOUTH": 2250,
 "AL-MONTGOMERY": 2200,
