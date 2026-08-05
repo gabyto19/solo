@@ -1,11 +1,26 @@
-<form (ngSubmit)="onSubmit()" #form="ngForm">
-  <input type="text" id="name" [(ngModel)]="formData.name" name="name" required placeholder="სახელი და გვარი" />
+<div class="form-page">
+  <div class="card">
+    <h2 class="page-title">დეპოზიტი</h2>
 
-  <input type="email" id="email" [(ngModel)]="formData.email" name="email" required placeholder="პირადი ნომერი"/>
+    <form (ngSubmit)="onSubmit()" #form="ngForm">
+      <div class="field">
+        <label for="name">სახელი და გვარი</label>
+        <input type="text" id="name" [(ngModel)]="formData.name" name="name" required />
+      </div>
 
-  <input id="message" [(ngModel)]="formData.message" name="message" required placeholder="დეპოზიტის რაოდენობა"/>
+      <div class="field">
+        <label for="email">პირადი ნომერი</label>
+        <input type="email" id="email" [(ngModel)]="formData.email" name="email" required />
+      </div>
 
-  <button type="submit">შესრულება</button>
-</form>
+      <div class="field">
+        <label for="message">დეპოზიტის რაოდენობა</label>
+        <input id="message" [(ngModel)]="formData.message" name="message" required />
+      </div>
 
-<app-pdf-editor></app-pdf-editor>
+      <button type="submit" class="submit">შესრულება</button>
+    </form>
+  </div>
+
+  <app-pdf-editor></app-pdf-editor>
+</div>

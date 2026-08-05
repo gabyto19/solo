@@ -16,6 +16,10 @@ export class NavigationComponent {
     this.menuOpen = !this.menuOpen;
   }
 
+  closeMenu() {
+    this.menuOpen = false;
+  }
+
   logout() {
     this.menuOpen = false;
     // Navigate regardless of the response: the cookie is cleared server-side,

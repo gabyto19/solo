@@ -1,20 +1,29 @@
-<div class="admin-container">
+<div class="admin">
 
-  <h2>ადმინისტრირება</h2>
+  <h2 class="page-title">ადმინისტრირება</h2>
 
   <div class="notice error" *ngIf="error">{{ error }}</div>
   <div class="notice ok" *ngIf="notice">{{ notice }}</div>
 
   <!-- ── Create user ─────────────────────────────────────────── -->
-  <section>
+  <section class="card">
     <h3>ახალი მომხმარებელი</h3>
     <form (ngSubmit)="createUser()" class="new-user">
-      <input name="newEmail" [(ngModel)]="newEmail" type="email" placeholder="ელფოსტა" autocomplete="off" />
-      <input name="newPassword" [(ngModel)]="newPassword" type="password" placeholder="პაროლი (მინ. 8)" autocomplete="new-password" />
-      <select name="newRole" [(ngModel)]="newRole">
-        <option value="user">მომხმარებელი</option>
-        <option value="admin">ადმინისტრატორი</option>
-      </select>
+      <div class="field">
+        <label for="newEmail">ელფოსტა</label>
+        <input id="newEmail" name="newEmail" [(ngModel)]="newEmail" type="email" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="newPassword">პაროლი (მინ. 8)</label>
+        <input id="newPassword" name="newPassword" [(ngModel)]="newPassword" type="password" autocomplete="new-password" />
+      </div>
+      <div class="field">
+        <label for="newRole">როლი</label>
+        <select id="newRole" name="newRole" [(ngModel)]="newRole">
+          <option value="user">მომხმარებელი</option>
+          <option value="admin">ადმინისტრატორი</option>
+        </select>
+      </div>
       <button type="submit" [disabled]="creating">
         {{ creating ? 'იქმნება…' : 'შექმნა' }}
       </button>
@@ -26,33 +35,35 @@
     <h3>მომხმარებლები</h3>
     <p *ngIf="loading">იტვირთება…</p>
 
-    <table class="data-table" *ngIf="!loading && users.length">
-      <tr>
-        <th>ელფოსტა</th>
-        <th>როლი</th>
-        <th>სტატუსი</th>
-        <th>მოქმედება</th>
-      </tr>
-      <tr *ngFor="let u of users">
-        <td>{{ u.email }}</td>
-        <td>{{ u.role === 'admin' ? 'ადმინი' : 'მომხმარებელი' }}</td>
-        <td>
-          <span [class.inactive]="!u.is_active">
-            {{ u.is_active ? 'აქტიური' : 'გათიშული' }}
-          </span>
-        </td>
-        <td class="row-actions">
-          <button type="button" (click)="toggleActive(u)">
-            {{ u.is_active ? 'გათიშვა' : 'ჩართვა' }}
-          </button>
-          <button type="button" (click)="toggleRole(u)">
-            {{ u.role === 'admin' ? 'ადმინის მოხსნა' : 'ადმინად დანიშვნა' }}
-          </button>
-          <button type="button" (click)="resetPassword(u)">პაროლი</button>
-          <button type="button" class="danger" (click)="removeUser(u)">წაშლა</button>
-        </td>
-      </tr>
-    </table>
+    <div class="table-scroll" *ngIf="!loading && users.length">
+      <table class="data-table">
+        <tr>
+          <th>ელფოსტა</th>
+          <th>როლი</th>
+          <th>სტატუსი</th>
+          <th>მოქმედება</th>
+        </tr>
+        <tr *ngFor="let u of users">
+          <td>{{ u.email }}</td>
+          <td>{{ u.role === 'admin' ? 'ადმინი' : 'მომხმარებელი' }}</td>
+          <td>
+            <span class="status" [class.inactive]="!u.is_active">
+              {{ u.is_active ? 'აქტიური' : 'გათიშული' }}
+            </span>
+          </td>
+          <td class="row-actions">
+            <button type="button" class="secondary small" (click)="toggleActive(u)">
+              {{ u.is_active ? 'გათიშვა' : 'ჩართვა' }}
+            </button>
+            <button type="button" class="secondary small" (click)="toggleRole(u)">
+              {{ u.role === 'admin' ? 'ადმინის მოხსნა' : 'ადმინად დანიშვნა' }}
+            </button>
+            <button type="button" class="secondary small" (click)="resetPassword(u)">პაროლი</button>
+            <button type="button" class="danger small" (click)="removeUser(u)">წაშლა</button>
+          </td>
+        </tr>
+      </table>
+    </div>
   </section>
 
   <!-- ── Prices ──────────────────────────────────────────────── -->
@@ -66,20 +77,22 @@
       <input class="filter" name="stateFilter" [(ngModel)]="stateFilter" placeholder="ძებნა…" />
       <p class="hint">სულ {{ states.length }} ლოკაცია. ნაჩვენებია პირველი 40 შედეგი.</p>
 
-      <table class="data-table">
-        <tr *ngFor="let s of filteredStates">
-          <td>{{ s.name }}</td>
-          <td class="price-cell">
-            <ng-container *ngIf="editingId !== s.id">{{ s.price }}</ng-container>
-            <input *ngIf="editingId === s.id" name="editPrice" [(ngModel)]="editPrice" type="number" />
-          </td>
-          <td class="row-actions">
-            <button type="button" *ngIf="editingId !== s.id" (click)="startEdit(s)">შეცვლა</button>
-            <button type="button" *ngIf="editingId === s.id" (click)="saveEdit(s)">შენახვა</button>
-            <button type="button" *ngIf="editingId === s.id" (click)="cancelEdit()">გაუქმება</button>
-          </td>
-        </tr>
-      </table>
+      <div class="table-scroll">
+        <table class="data-table">
+          <tr *ngFor="let s of filteredStates">
+            <td>{{ s.name }}</td>
+            <td class="price-cell">
+              <ng-container *ngIf="editingId !== s.id">{{ s.price }}</ng-container>
+              <input *ngIf="editingId === s.id" name="editPrice" [(ngModel)]="editPrice" type="number" />
+            </td>
+            <td class="row-actions">
+              <button type="button" class="secondary small" *ngIf="editingId !== s.id" (click)="startEdit(s)">შეცვლა</button>
+              <button type="button" class="small" *ngIf="editingId === s.id" (click)="saveEdit(s)">შენახვა</button>
+              <button type="button" class="secondary small" *ngIf="editingId === s.id" (click)="cancelEdit()">გაუქმება</button>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </section>
 
