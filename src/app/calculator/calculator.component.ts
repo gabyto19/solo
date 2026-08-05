@@ -31,10 +31,15 @@ export class CalculatorComponent implements OnInit {
     title: '',
   };
 
-  /** Lot lookup (IAAI / Copart) fills in nothing automatically — it only shows
-   *  what the auction knows about the lot, next to the price result. */
+  /**
+   * Lot lookup (IAAI / Copart). It carries its own car type rather than
+   * borrowing the one above: the block reads as independent, and taking the
+   * form's value silently sent an empty carTypeId — which the upstream API
+   * rejects with a 400 — whenever the lot was searched first.
+   */
   lot = '';
   lotSource: 'iaai' | 'copart' = 'iaai';
+  lotCarTypeId: any = '';
   lotResult: ResultRow[] = [];
   lotLoading = false;
 
@@ -131,9 +136,13 @@ export class CalculatorComponent implements OnInit {
     });
   }
 
+  get canLookupLot(): boolean {
+    return !!this.lot.trim() && !!this.lotCarTypeId && !this.lotLoading;
+  }
+
   lookupLot(): void {
+    if (!this.canLookupLot) return;
     const lot = this.lot.trim();
-    if (!lot) return;
 
     this.lotLoading = true;
     this.lotError = '';
@@ -141,8 +150,8 @@ export class CalculatorComponent implements OnInit {
 
     const call =
       this.lotSource === 'iaai'
-        ? this.api.parseCarFromIAAI(this.form.carTypeId, lot)
-        : this.api.parseCarFromCopart(this.form.carTypeId, lot);
+        ? this.api.parseCarFromIAAI(this.lotCarTypeId, lot)
+        : this.api.parseCarFromCopart(this.lotCarTypeId, lot);
 
     call.subscribe({
       next: (res) => {
@@ -210,10 +219,13 @@ export class CalculatorComponent implements OnInit {
       return 'ტრანსპორტის API დროებით მიუწვდომელია. სცადეთ მოგვიანებით.';
     }
     if (err?.status) {
-      return (
+      // The proxy passes the upstream body through verbatim, which may be a
+      // plain string rather than JSON — otherwise the reason is lost.
+      const detail =
         err?.error?.error ||
-        `შეცდომა ${err.status}. ${err?.error?.message || err?.message || ''}`.trim()
-      );
+        err?.error?.message ||
+        (typeof err?.error === 'string' ? err.error.slice(0, 200) : '');
+      return detail || `შეცდომა ${err.status}.`;
     }
     return err?.message || 'უცნობი შეცდომა.';
   }
