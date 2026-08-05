@@ -18,18 +18,19 @@
 
 .lot-row {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
 }
 
-.lot-row select { flex: 0 0 130px; }
-.lot-row input { flex: 1; min-width: 0; }
+.lot-row select { flex: 0 0 150px; }
+.lot-row input { flex: 1 1 180px; min-width: 0; }
 .lot-row button { flex-shrink: 0; }
 
 @media (max-width: 620px) {
   .grid { grid-template-columns: 1fr; }
 
-  .lot-row { flex-wrap: wrap; }
-  .lot-row select { flex: 1 1 100%; }
-  .lot-row input { flex: 1 1 auto; }
+  .lot-row select { flex: 1 1 calc(50% - var(--space-1)); }
+  .lot-row input { flex: 1 1 100%; }
+  .lot-row button { flex: 1 1 100%; }
 }

@@ -87,12 +87,16 @@
   <div class="lot-block" *ngIf="!loadingOptions">
     <h3>ლოტის მოძებნა</h3>
     <div class="lot-row">
-      <select name="lotSource" [(ngModel)]="lotSource">
+      <select name="lotSource" [(ngModel)]="lotSource" aria-label="აუქციონი">
         <option value="iaai">IAAI</option>
         <option value="copart">Copart</option>
       </select>
+      <select name="lotCarType" [(ngModel)]="lotCarTypeId" aria-label="ავტომობილის ტიპი">
+        <option value="">— ტიპი —</option>
+        <option *ngFor="let t of carTypes" [ngValue]="t.id">{{ t.name }}</option>
+      </select>
       <input name="lot" [(ngModel)]="lot" placeholder="ლოტის ნომერი" />
-      <button type="button" (click)="lookupLot()" [disabled]="!lot.trim() || lotLoading">
+      <button type="button" (click)="lookupLot()" [disabled]="!canLookupLot">
         {{ lotLoading ? 'ეძებს…' : 'მოძებნა' }}
       </button>
     </div>
