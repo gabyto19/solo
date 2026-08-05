@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'
+import { HttpClientModule } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -16,6 +17,8 @@ import { VehicleComponent } from './vehicle/vehicle.component';
 import { ListComponent } from './list/list.component';
 import { PasswordComponent } from './password/password.component';
 import { PdfEditorComponent } from './pdf-editor/pdf-editor.component';
+import { CalculatorComponent } from './calculator/calculator.component';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -25,12 +28,15 @@ import { PdfEditorComponent } from './pdf-editor/pdf-editor.component';
     VehicleComponent,
     ListComponent,
     PasswordComponent,
-    PdfEditorComponent
+    PdfEditorComponent,
+    CalculatorComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     MatToolbarModule,
     BrowserAnimationsModule,
     MatSidenavModule,

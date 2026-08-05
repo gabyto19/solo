@@ -30,6 +30,20 @@
   }
   
   /* Styling for the items */
+  .list-status {
+    text-align: center;
+    color: #fff;
+    font-family: sans-serif;
+  }
+
+  .list-status.error {
+    background-color: #fde2e2;
+    color: #222;
+    border: 1px solid #e07070;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
   .state-list li {
     padding: 5px;
     font-size: 16px;

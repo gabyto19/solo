@@ -1,8 +1,11 @@
 <img src="/assets/imgs/logo.png" alt="Logo">
-<div class="menu-container">
+<div class="menu-container" *ngIf="auth.user$ | async as user">
   <button routerLink="/deposit">დეპოზიტი</button>
   <button routerLink="/vehicle">საფასური</button>
   <button routerLink="/list">ფასები</button>
+  <button routerLink="/calculator">კალკულატორი</button>
+  <button routerLink="/admin" *ngIf="user.role === 'admin'">ადმინი</button>
+  <button (click)="logout()">გასვლა</button>
 </div>
 
 <!-- Burger Menu for Mobile -->
@@ -13,8 +16,11 @@
 </div>
 
 <!-- Mobile menu links -->
-<div class="mobile-menu" [ngClass]="{ 'active': menuOpen }">
+<div class="mobile-menu" [ngClass]="{ 'active': menuOpen }" *ngIf="auth.user$ | async as user">
   <button routerLink="/deposit">დეპოზიტი</button>
   <button routerLink="/vehicle">საფასური</button>
   <button routerLink="/list">ფასები</button>
+  <button routerLink="/calculator">კალკულატორი</button>
+  <button routerLink="/admin" *ngIf="user.role === 'admin'">ადმინი</button>
+  <button (click)="logout()">გასვლა</button>
 </div>

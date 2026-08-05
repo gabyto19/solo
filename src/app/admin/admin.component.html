@@ -1,0 +1,86 @@
+<div class="admin-container">
+
+  <h2>ადმინისტრირება</h2>
+
+  <div class="notice error" *ngIf="error">{{ error }}</div>
+  <div class="notice ok" *ngIf="notice">{{ notice }}</div>
+
+  <!-- ── Create user ─────────────────────────────────────────── -->
+  <section>
+    <h3>ახალი მომხმარებელი</h3>
+    <form (ngSubmit)="createUser()" class="new-user">
+      <input name="newEmail" [(ngModel)]="newEmail" type="email" placeholder="ელფოსტა" autocomplete="off" />
+      <input name="newPassword" [(ngModel)]="newPassword" type="password" placeholder="პაროლი (მინ. 8)" autocomplete="new-password" />
+      <select name="newRole" [(ngModel)]="newRole">
+        <option value="user">მომხმარებელი</option>
+        <option value="admin">ადმინისტრატორი</option>
+      </select>
+      <button type="submit" [disabled]="creating">
+        {{ creating ? 'იქმნება…' : 'შექმნა' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- ── Users ───────────────────────────────────────────────── -->
+  <section>
+    <h3>მომხმარებლები</h3>
+    <p *ngIf="loading">იტვირთება…</p>
+
+    <table class="data-table" *ngIf="!loading && users.length">
+      <tr>
+        <th>ელფოსტა</th>
+        <th>როლი</th>
+        <th>სტატუსი</th>
+        <th>მოქმედება</th>
+      </tr>
+      <tr *ngFor="let u of users">
+        <td>{{ u.email }}</td>
+        <td>{{ u.role === 'admin' ? 'ადმინი' : 'მომხმარებელი' }}</td>
+        <td>
+          <span [class.inactive]="!u.is_active">
+            {{ u.is_active ? 'აქტიური' : 'გათიშული' }}
+          </span>
+        </td>
+        <td class="row-actions">
+          <button type="button" (click)="toggleActive(u)">
+            {{ u.is_active ? 'გათიშვა' : 'ჩართვა' }}
+          </button>
+          <button type="button" (click)="toggleRole(u)">
+            {{ u.role === 'admin' ? 'ადმინის მოხსნა' : 'ადმინად დანიშვნა' }}
+          </button>
+          <button type="button" (click)="resetPassword(u)">პაროლი</button>
+          <button type="button" class="danger" (click)="removeUser(u)">წაშლა</button>
+        </td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- ── Prices ──────────────────────────────────────────────── -->
+  <section>
+    <h3>ფასები</h3>
+    <button type="button" *ngIf="!states.length" (click)="loadStates()" [disabled]="statesLoading">
+      {{ statesLoading ? 'იტვირთება…' : 'ფასების ჩატვირთვა' }}
+    </button>
+
+    <div *ngIf="states.length">
+      <input class="filter" name="stateFilter" [(ngModel)]="stateFilter" placeholder="ძებნა…" />
+      <p class="hint">სულ {{ states.length }} ლოკაცია. ნაჩვენებია პირველი 40 შედეგი.</p>
+
+      <table class="data-table">
+        <tr *ngFor="let s of filteredStates">
+          <td>{{ s.name }}</td>
+          <td class="price-cell">
+            <ng-container *ngIf="editingId !== s.id">{{ s.price }}</ng-container>
+            <input *ngIf="editingId === s.id" name="editPrice" [(ngModel)]="editPrice" type="number" />
+          </td>
+          <td class="row-actions">
+            <button type="button" *ngIf="editingId !== s.id" (click)="startEdit(s)">შეცვლა</button>
+            <button type="button" *ngIf="editingId === s.id" (click)="saveEdit(s)">შენახვა</button>
+            <button type="button" *ngIf="editingId === s.id" (click)="cancelEdit()">გაუქმება</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+</div>
