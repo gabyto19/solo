@@ -36,7 +36,6 @@ export class CalculatorComponent implements OnInit {
   lot = '';
   lotSource: 'iaai' | 'copart' = 'iaai';
   lotResult: ResultRow[] = [];
-  lotRaw: any = null;
   lotLoading = false;
 
   loadingOptions = true;
@@ -46,10 +45,7 @@ export class CalculatorComponent implements OnInit {
   error = '';
   lotError = '';
 
-  resultRows: ResultRow[] = [];
   serviceRows: ResultRow[] = [];
-  rawResult: any = null;
-  showRaw = false;
 
   constructor(private api: DealerApiService) {}
 
@@ -118,20 +114,14 @@ export class CalculatorComponent implements OnInit {
 
     this.calculating = true;
     this.error = '';
-    this.resultRows = [];
     this.serviceRows = [];
-    this.rawResult = null;
 
-    // Both endpoints describe the same route; ServicePrices additionally takes
-    // a delivery port. Request them together so the result shows the full cost.
-    forkJoin({
-      calculator: this.api.getCalculatorData(this.form),
-      services: this.api.getServicePrices(this.form),
-    }).subscribe({
+    // Only ServicePrices is requested. GetCalculatorData describes the same
+    // route but its output is no longer displayed, and calling it would spend
+    // dealer API quota for nothing.
+    this.api.getServicePrices(this.form).subscribe({
       next: (res) => {
-        this.rawResult = res;
-        this.resultRows = this.flatten(res.calculator);
-        this.serviceRows = this.flatten(res.services);
+        this.serviceRows = this.flatten(res);
         this.calculating = false;
       },
       error: (err) => {
@@ -148,7 +138,6 @@ export class CalculatorComponent implements OnInit {
     this.lotLoading = true;
     this.lotError = '';
     this.lotResult = [];
-    this.lotRaw = null;
 
     const call =
       this.lotSource === 'iaai'
@@ -157,7 +146,6 @@ export class CalculatorComponent implements OnInit {
 
     call.subscribe({
       next: (res) => {
-        this.lotRaw = res;
         this.lotResult = this.flatten(res);
         this.lotLoading = false;
       },
@@ -179,9 +167,7 @@ export class CalculatorComponent implements OnInit {
       title: '',
     };
     this.cities = [];
-    this.resultRows = [];
     this.serviceRows = [];
-    this.rawResult = null;
     this.error = '';
   }
 
