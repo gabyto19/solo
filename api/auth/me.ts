@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { allowMethods, getCurrentUser } from '../_lib/auth';
+import { describeServerError } from '../_lib/db';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!allowMethods(req, res, ['GET'])) return;
@@ -13,6 +14,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (err: any) {
     console.error('me failed:', err);
-    res.status(500).json({ error: 'სერვერის შეცდომა.' });
+    const d = describeServerError(err);
+    res.status(d.status).json({ error: d.error });
   }
 }

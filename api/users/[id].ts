@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, UserRow } from '../_lib/db';
+import { sql, UserRow, describeServerError } from '../_lib/db';
 import { allowMethods, hashPassword, requireAdmin } from '../_lib/auth';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -69,6 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).json({ user: rows[0] });
   } catch (err: any) {
     console.error('user update failed:', err);
-    res.status(500).json({ error: 'სერვერის შეცდომა.' });
+    const d = describeServerError(err);
+    res.status(d.status).json({ error: d.error });
   }
 }
