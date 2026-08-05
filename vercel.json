@@ -4,7 +4,6 @@
   "outputDirectory": "dist/solov2/browser",
   "rewrites": [
     {
-      "comment": "SPA fallback for client-side routes. The negative lookahead keeps /api/* out, so serverless functions are never swallowed by index.html.",
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

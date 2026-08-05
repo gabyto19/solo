@@ -97,3 +97,18 @@ npx vercel dev
 Both layers are enforced: the Angular guards decide what to render, and every
 `api/` handler independently re-checks the session, so a crafted request cannot
 bypass the UI.
+
+## About `vercel.json`
+
+Two details there are easy to break:
+
+- `outputDirectory` is `dist/solov2/browser`. Angular 17+ emits into a
+  `browser/` subdirectory; pointing at `dist/solov2` builds fine and then
+  deploys nothing.
+- The SPA rewrite source is `/((?!api/).*)` rather than `/(.*)`. The negative
+  lookahead keeps `/api/*` out of the fallback so the serverless functions are
+  not served `index.html`.
+
+The file is validated against Vercel's schema at deploy time and rejects any
+property it does not recognise — including comment keys — so keep notes here
+rather than in the JSON.
