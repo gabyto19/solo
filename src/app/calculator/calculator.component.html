@@ -70,27 +70,14 @@
   </form>
 
   <!-- ── Result ──────────────────────────────────────────────── -->
-  <div class="result" *ngIf="resultRows.length || serviceRows.length">
-    <h3>გამოთვლის შედეგი</h3>
-    <table class="result-table" *ngIf="resultRows.length">
-      <tr *ngFor="let row of resultRows">
-        <td class="label">{{ row.label }}</td>
-        <td class="value">{{ row.value }}</td>
-      </tr>
-    </table>
-
-    <h3 *ngIf="serviceRows.length">სერვისების ფასები</h3>
-    <table class="result-table" *ngIf="serviceRows.length">
+  <div class="result" *ngIf="serviceRows.length">
+    <h3>ფასები</h3>
+    <table class="result-table">
       <tr *ngFor="let row of serviceRows">
         <td class="label">{{ row.label }}</td>
         <td class="value">{{ row.value }}</td>
       </tr>
     </table>
-
-    <button type="button" class="link" (click)="showRaw = !showRaw">
-      {{ showRaw ? 'დამალე' : 'აჩვენე' }} დაუმუშავებელი პასუხი
-    </button>
-    <pre class="raw" *ngIf="showRaw">{{ rawResult | json }}</pre>
   </div>
 
   <!-- ── Lot lookup ──────────────────────────────────────────── -->

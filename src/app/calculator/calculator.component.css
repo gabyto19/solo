@@ -61,14 +61,6 @@ button.secondary {
   background-color: #6b7280;
 }
 
-button.link {
-  background: none;
-  color: #fff;
-  text-decoration: underline;
-  padding: 6px 0;
-  font-size: 14px;
-}
-
 .notice {
   padding: 10px;
   border-radius: 5px;
@@ -139,15 +131,6 @@ button.link {
   text-align: right;
   font-weight: bold;
   color: #111;
-}
-
-.raw {
-  background-color: #f7f7f7;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  overflow-x: auto;
-  max-height: 320px;
 }
 
 .lot-row {
