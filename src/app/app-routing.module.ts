@@ -4,13 +4,15 @@ import { DepositComponent } from './deposit/deposit.component';
 import { VehicleComponent } from './vehicle/vehicle.component';
 import { ListComponent } from './list/list.component';
 import { PasswordComponent } from './password/password.component';
+import { CalculatorComponent } from './calculator/calculator.component';
 import { AuthGuard } from './auth.guard'; // Import the guard
 
 const routes: Routes = [
   { path: '', component: PasswordComponent },
   { path: 'deposit', component: DepositComponent, canActivate: [AuthGuard] }, 
   { path: 'vehicle', component: VehicleComponent, canActivate: [AuthGuard] }, 
-  { path: 'list', component: ListComponent, }, 
+  { path: 'list', component: ListComponent, },
+  { path: 'calculator', component: CalculatorComponent, canActivate: [AuthGuard] },
   { path: 'password', component: PasswordComponent }, // Password page route
 ];
 

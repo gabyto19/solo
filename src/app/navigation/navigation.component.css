@@ -5,11 +5,23 @@ img {
 
 div button {
   height: 40px;
-  width: 100px;
+  /* Auto width with a floor, so longer labels ("კალკულატორი") are not clipped
+     while the shorter ones keep their original size. */
+  min-width: 100px;
+  padding: 0 12px;
   margin-left: 20px;
   border-radius: 15px;
   border: none;
   box-shadow: 2px 2px 7px black;
+  white-space: nowrap;
+}
+
+/* Keep the row clear of the right edge and let it wrap on narrow desktops. */
+.menu-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-right: 20px;
 }
 
 /* Mobile menu styles */
