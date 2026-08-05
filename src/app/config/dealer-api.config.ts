@@ -13,9 +13,9 @@ export const DEALER_API = {
   /** Upstream API root. Point this at a proxy if the key must stay private. */
   baseUrl: 'https://apidealer.payauto.de/api/ApiForDealers',
 
-  /** Supplied by LionTrans. Empty until filled in — priced calls will fail. */
-  dealerId: '',
-  apiKey: '',
+  /** Supplied by LionTrans. Sent as query params on the priced endpoints. */
+  dealerId: '14844',
+  apiKey: 'bl3NsbeJWAZ7doFN/9Z4edeStJCeUYAg5d03WwBTO3I=',
 };
 
 /** True when credentials are present, so the UI can explain why calls fail. */

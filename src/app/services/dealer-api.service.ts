@@ -1,8 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DEALER_API } from '../config/dealer-api.config';
+
+/**
+ * Angular's default query-string encoder deliberately un-escapes `+`, `/` and
+ * `=` after calling encodeURIComponent. That corrupts base64 values: the apiKey
+ * contains `/` and a trailing `=`, and a `+` in any future key would reach the
+ * server as a space. Encoding strictly keeps the credentials intact.
+ */
+class StrictHttpParameterCodec implements HttpParameterCodec {
+  encodeKey(key: string): string {
+    return encodeURIComponent(key);
+  }
+  encodeValue(value: string): string {
+    return encodeURIComponent(value);
+  }
+  decodeKey(key: string): string {
+    return decodeURIComponent(key);
+  }
+  decodeValue(value: string): string {
+    return decodeURIComponent(value);
+  }
+}
+
+const PARAM_CODEC = new StrictHttpParameterCodec();
 
 /** A single option in one of the API's dropdown endpoints. */
 export interface DropDownItem {
@@ -57,9 +80,14 @@ export class DealerApiService {
     return `${DEALER_API.baseUrl}/${endpoint}`;
   }
 
+  /** Always build params through the strict codec, never `new HttpParams()`. */
+  private newParams(): HttpParams {
+    return new HttpParams({ encoder: PARAM_CODEC });
+  }
+
   /** Query params carrying the dealer credentials, required by priced calls. */
   private authParams(): HttpParams {
-    return new HttpParams()
+    return this.newParams()
       .set('dealerId', DEALER_API.dealerId)
       .set('apiKey', DEALER_API.apiKey);
   }
@@ -84,7 +112,7 @@ export class DealerApiService {
   getAuctionCities(auctionId: any): Observable<DropDownItem[]> {
     return this.dropdown(
       'AuctionCitiesDropDownForDealerApi',
-      new HttpParams().set('auctionId', String(auctionId ?? ''))
+      this.newParams().set('auctionId', String(auctionId ?? ''))
     );
   }
 

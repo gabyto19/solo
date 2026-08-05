@@ -63,7 +63,7 @@ button.secondary {
 
 button.link {
   background: none;
-  color: #2b6cb0;
+  color: #fff;
   text-decoration: underline;
   padding: 6px 0;
   font-size: 14px;
@@ -100,22 +100,37 @@ button.link {
 .lot-block h3 {
   font-size: 18px;
   margin-bottom: 10px;
+  color: #fff;
 }
 
+.calc-title,
+.field label {
+  color: #fff;
+}
+
+/* The page sits on a dark gradient, so results need their own light surface
+   to stay readable. */
 .result-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .result-table td {
-  padding: 8px;
+  padding: 10px 12px;
   border-bottom: 1px solid #e5e5e5;
   font-size: 15px;
 }
 
+.result-table tr:last-child td {
+  border-bottom: none;
+}
+
 .result-table .label {
-  color: #555;
+  color: #333;
   width: 55%;
   word-break: break-word;
 }
@@ -123,6 +138,7 @@ button.link {
 .result-table .value {
   text-align: right;
   font-weight: bold;
+  color: #111;
 }
 
 .raw {
