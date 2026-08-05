@@ -1,166 +1,35 @@
-.calc-container {
-  margin: 20px;
-  max-width: 640px;
-  font-family: sans-serif;
+.calc {
+  max-width: 760px;
+  margin: 0 auto;
 }
 
-.calc-title {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-
-.field {
-  margin-bottom: 14px;
-}
-
-.field label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.field select,
-.field input {
-  width: 100%;
-  padding: 8px;
-  font-size: 16px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
-.field select:disabled {
-  background-color: #f0f0f0;
-  color: #888;
-}
-
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-button {
-  padding: 10px 18px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #2b6cb0;
-  color: #fff;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #b0b0b0;
-  cursor: not-allowed;
-}
-
-button.secondary {
-  background-color: #6b7280;
-}
-
-.notice {
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 14px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.notice.warn {
-  background-color: #fff4d6;
-  border: 1px solid #e6c34a;
-}
-
-.notice.error {
-  background-color: #fde2e2;
-  border: 1px solid #e07070;
-}
-
-.notice.info {
-  background-color: #f0f0f0;
+/* Two columns on a wide screen, one on a narrow one. Seven fields stacked
+   single-file made the form unnecessarily tall. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-4);
 }
 
 .result,
 .lot-block {
-  margin-top: 28px;
-}
-
-.result h3,
-.lot-block h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #fff;
-}
-
-.calc-title,
-.field label {
-  color: #fff;
-}
-
-/* The page sits on a dark gradient, so results need their own light surface
-   to stay readable. */
-.result-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 16px;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.result-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #e5e5e5;
-  font-size: 15px;
-}
-
-.result-table tr:last-child td {
-  border-bottom: none;
-}
-
-.result-table .label {
-  color: #333;
-  width: 55%;
-  word-break: break-word;
-}
-
-.result-table .value {
-  text-align: right;
-  font-weight: bold;
-  color: #111;
+  margin-top: var(--space-6);
 }
 
 .lot-row {
   display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
-.lot-row select {
-  flex: 0 0 110px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+.lot-row select { flex: 0 0 130px; }
+.lot-row input { flex: 1; min-width: 0; }
+.lot-row button { flex-shrink: 0; }
 
-.lot-row input {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  min-width: 0;
-}
+@media (max-width: 620px) {
+  .grid { grid-template-columns: 1fr; }
 
-@media (max-width: 600px) {
-  .calc-container {
-    margin: 12px;
-  }
-
-  .lot-row {
-    flex-wrap: wrap;
-  }
+  .lot-row { flex-wrap: wrap; }
+  .lot-row select { flex: 1 1 100%; }
+  .lot-row input { flex: 1 1 auto; }
 }

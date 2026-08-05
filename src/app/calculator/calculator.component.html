@@ -1,80 +1,83 @@
-<div class="calc-container">
+<div class="calc">
 
-  <h2 class="calc-title">ტრანსპორტირების კალკულატორი</h2>
+  <h2 class="page-title">ტრანსპორტირების კალკულატორი</h2>
 
   <div class="notice error" *ngIf="error">{{ error }}</div>
-
   <div class="notice info" *ngIf="loadingOptions">იტვირთება…</div>
 
-  <form (ngSubmit)="calculate()" *ngIf="!loadingOptions">
+  <div class="card" *ngIf="!loadingOptions">
+    <form (ngSubmit)="calculate()">
 
-    <div class="field">
-      <label for="auction">აუქციონი</label>
-      <select id="auction" name="auction" [(ngModel)]="form.auctionId" (ngModelChange)="onAuctionChange()">
-        <option value="">— აირჩიეთ —</option>
-        <option *ngFor="let a of auctions" [ngValue]="a.id">{{ a.name }}</option>
-      </select>
-    </div>
+      <div class="grid">
+        <div class="field">
+          <label for="auction">აუქციონი</label>
+          <select id="auction" name="auction" [(ngModel)]="form.auctionId" (ngModelChange)="onAuctionChange()">
+            <option value="">— აირჩიეთ —</option>
+            <option *ngFor="let a of auctions" [ngValue]="a.id">{{ a.name }}</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="city">აუქციონის ქალაქი</label>
-      <select id="city" name="city" [(ngModel)]="form.auctionCityId" [disabled]="!form.auctionId || loadingCities">
-        <option value="">{{ loadingCities ? 'იტვირთება…' : '— აირჩიეთ —' }}</option>
-        <option *ngFor="let c of cities" [ngValue]="c.id">{{ c.name }}</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="city">აუქციონის ქალაქი</label>
+          <select id="city" name="city" [(ngModel)]="form.auctionCityId" [disabled]="!form.auctionId || loadingCities">
+            <option value="">{{ loadingCities ? 'იტვირთება…' : '— აირჩიეთ —' }}</option>
+            <option *ngFor="let c of cities" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="state">შტატი</label>
-      <select id="state" name="state" [(ngModel)]="form.stateId">
-        <option value="">— აირჩიეთ —</option>
-        <option *ngFor="let s of states" [ngValue]="s.id">{{ s.name }}</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="state">შტატი</label>
+          <select id="state" name="state" [(ngModel)]="form.stateId">
+            <option value="">— აირჩიეთ —</option>
+            <option *ngFor="let s of states" [ngValue]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="carType">ავტომობილის ტიპი</label>
-      <select id="carType" name="carType" [(ngModel)]="form.carTypeId">
-        <option value="">— აირჩიეთ —</option>
-        <option *ngFor="let t of carTypes" [ngValue]="t.id">{{ t.name }}</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="carType">ავტომობილის ტიპი</label>
+          <select id="carType" name="carType" [(ngModel)]="form.carTypeId">
+            <option value="">— აირჩიეთ —</option>
+            <option *ngFor="let t of carTypes" [ngValue]="t.id">{{ t.name }}</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="intlPort">საერთაშორისო პორტი</label>
-      <select id="intlPort" name="intlPort" [(ngModel)]="form.internationalPortId">
-        <option value="">— აირჩიეთ —</option>
-        <option *ngFor="let p of internationalPorts" [ngValue]="p.id">{{ p.name }}</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="intlPort">საერთაშორისო პორტი</label>
+          <select id="intlPort" name="intlPort" [(ngModel)]="form.internationalPortId">
+            <option value="">— აირჩიეთ —</option>
+            <option *ngFor="let p of internationalPorts" [ngValue]="p.id">{{ p.name }}</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="delPort">დანიშნულების პორტი</label>
-      <select id="delPort" name="delPort" [(ngModel)]="form.deliveryPortId">
-        <option value="">— აირჩიეთ —</option>
-        <option *ngFor="let p of deliveryPorts" [ngValue]="p.id">{{ p.name }}</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="delPort">დანიშნულების პორტი</label>
+          <select id="delPort" name="delPort" [(ngModel)]="form.deliveryPortId">
+            <option value="">— აირჩიეთ —</option>
+            <option *ngFor="let p of deliveryPorts" [ngValue]="p.id">{{ p.name }}</option>
+          </select>
+        </div>
 
-    <div class="field">
-      <label for="title">Title</label>
-      <input id="title" name="title" [(ngModel)]="form.title" placeholder="არასავალდებულო" />
-    </div>
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" name="title" [(ngModel)]="form.title" placeholder="არასავალდებულო" />
+        </div>
+      </div>
 
-    <div class="actions">
-      <button type="submit" [disabled]="!canCalculate">
-        {{ calculating ? 'ითვლება…' : 'გამოთვლა' }}
-      </button>
-      <button type="button" class="secondary" (click)="reset()">გასუფთავება</button>
-    </div>
-  </form>
+      <div class="actions">
+        <button type="submit" [disabled]="!canCalculate">
+          {{ calculating ? 'ითვლება…' : 'გამოთვლა' }}
+        </button>
+        <button type="button" class="secondary" (click)="reset()">გასუფთავება</button>
+      </div>
+    </form>
+  </div>
 
-  <!-- ── Result ──────────────────────────────────────────────── -->
+  <!-- ── Prices ──────────────────────────────────────────────── -->
   <div class="result" *ngIf="serviceRows.length">
     <h3>ფასები</h3>
-    <table class="result-table">
+    <table class="data-table">
       <tr *ngFor="let row of serviceRows">
-        <td class="label">{{ row.label }}</td>
+        <td>{{ row.label }}</td>
         <td class="value">{{ row.value }}</td>
       </tr>
     </table>
@@ -96,9 +99,9 @@
 
     <div class="notice error" *ngIf="lotError">{{ lotError }}</div>
 
-    <table class="result-table" *ngIf="lotResult.length">
+    <table class="data-table" *ngIf="lotResult.length">
       <tr *ngFor="let row of lotResult">
-        <td class="label">{{ row.label }}</td>
+        <td>{{ row.label }}</td>
         <td class="value">{{ row.value }}</td>
       </tr>
     </table>

@@ -1,15 +1,29 @@
-  <form (ngSubmit)="onSubmit()">
-    <div>
-      <input id="name" [(ngModel)]="formData.name" name="name" required placeholder="სახელი, გვარი, ID "/>
-    </div>
-    <div>
-      <input id="lastName" [(ngModel)]="formData.lastName" name="lastName" required placeholder="მანქანის მოდელი"/>
-    </div>
-    <div>
-      <input id="vinCode" [(ngModel)]="formData.vinCode" name="vinCode" required placeholder="ვინ კოდი"/>
-    </div>
-    <div>
-      <input id="amount" [(ngModel)]="formData.amount" name="amount" required placeholder="თანხა"/>
-    </div>
-    <button type="submit">შესრულება</button>
-  </form>
+<div class="form-page">
+  <div class="card">
+    <h2 class="page-title">საფასური</h2>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="field">
+        <label for="name">სახელი, გვარი, ID</label>
+        <input id="name" [(ngModel)]="formData.name" name="name" required />
+      </div>
+
+      <div class="field">
+        <label for="lastName">მანქანის მოდელი</label>
+        <input id="lastName" [(ngModel)]="formData.lastName" name="lastName" required />
+      </div>
+
+      <div class="field">
+        <label for="vinCode">ვინ კოდი</label>
+        <input id="vinCode" [(ngModel)]="formData.vinCode" name="vinCode" required />
+      </div>
+
+      <div class="field">
+        <label for="amount">თანხა</label>
+        <input id="amount" [(ngModel)]="formData.amount" name="amount" required />
+      </div>
+
+      <button type="submit" class="submit">შესრულება</button>
+    </form>
+  </div>
+</div>

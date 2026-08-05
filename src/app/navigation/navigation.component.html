@@ -1,26 +1,38 @@
-<img src="/assets/imgs/logo.png" alt="Logo">
-<div class="menu-container" *ngIf="auth.user$ | async as user">
-  <button routerLink="/deposit">დეპოზიტი</button>
-  <button routerLink="/vehicle">საფასური</button>
-  <button routerLink="/list">ფასები</button>
-  <button routerLink="/calculator">კალკულატორი</button>
-  <button routerLink="/admin" *ngIf="user.role === 'admin'">ადმინი</button>
-  <button (click)="logout()">გასვლა</button>
-</div>
+<a class="brand" routerLink="/list">
+  <img src="/assets/imgs/logo.png" alt="Solo Auto Import" />
+</a>
 
-<!-- Burger Menu for Mobile -->
-<div class="burger-menu" (click)="toggleMenu()">
-  <div class="burger-line"></div>
-  <div class="burger-line"></div>
-  <div class="burger-line"></div>
-</div>
+<ng-container *ngIf="auth.user$ | async as user">
+  <!-- Desktop links -->
+  <div class="menu-container">
+    <a routerLink="/deposit" routerLinkActive="active">დეპოზიტი</a>
+    <a routerLink="/vehicle" routerLinkActive="active">საფასური</a>
+    <a routerLink="/list" routerLinkActive="active">ფასები</a>
+    <a routerLink="/calculator" routerLinkActive="active">კალკულატორი</a>
+    <a routerLink="/admin" routerLinkActive="active" *ngIf="user.role === 'admin'">ადმინი</a>
+    <button type="button" class="logout" (click)="logout()">გასვლა</button>
+  </div>
 
-<!-- Mobile menu links -->
-<div class="mobile-menu" [ngClass]="{ 'active': menuOpen }" *ngIf="auth.user$ | async as user">
-  <button routerLink="/deposit">დეპოზიტი</button>
-  <button routerLink="/vehicle">საფასური</button>
-  <button routerLink="/list">ფასები</button>
-  <button routerLink="/calculator">კალკულატორი</button>
-  <button routerLink="/admin" *ngIf="user.role === 'admin'">ადმინი</button>
-  <button (click)="logout()">გასვლა</button>
-</div>
+  <!-- Mobile toggle -->
+  <button
+    type="button"
+    class="burger"
+    (click)="toggleMenu()"
+    [attr.aria-expanded]="menuOpen"
+    aria-label="მენიუ"
+  >
+    <span class="burger-line"></span>
+    <span class="burger-line"></span>
+    <span class="burger-line"></span>
+  </button>
+
+  <!-- Mobile drawer -->
+  <div class="mobile-menu" [class.active]="menuOpen">
+    <a routerLink="/deposit" (click)="closeMenu()">დეპოზიტი</a>
+    <a routerLink="/vehicle" (click)="closeMenu()">საფასური</a>
+    <a routerLink="/list" (click)="closeMenu()">ფასები</a>
+    <a routerLink="/calculator" (click)="closeMenu()">კალკულატორი</a>
+    <a routerLink="/admin" (click)="closeMenu()" *ngIf="user.role === 'admin'">ადმინი</a>
+    <button type="button" class="logout" (click)="logout()">გასვლა</button>
+  </div>
+</ng-container>
