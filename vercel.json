@@ -3,9 +3,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/solov2/browser",
   "rewrites": [
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/api/dealer/:endpoint", "destination": "/api/dealer?endpoint=:endpoint" },
+    { "source": "/api/users/:id", "destination": "/api/users?id=:id" },
+    { "source": "/api/states/:id", "destination": "/api/states?id=:id" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
