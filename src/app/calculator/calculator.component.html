@@ -2,12 +2,6 @@
 
   <h2 class="calc-title">ტრანსპორტირების კალკულატორი</h2>
 
-  <div class="notice warn" *ngIf="credentialsMissing">
-    dealerId და apiKey არ არის შევსებული — ჩამონათვალი ჩაიტვირთება, მაგრამ
-    ფასის გამოთვლა ვერ იმუშავებს. შეავსეთ
-    <code>src/app/config/dealer-api.config.ts</code>.
-  </div>
-
   <div class="notice error" *ngIf="error">{{ error }}</div>
 
   <div class="notice info" *ngIf="loadingOptions">იტვირთება…</div>

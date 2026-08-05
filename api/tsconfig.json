@@ -1,0 +1,19 @@
+{
+  /* Deliberately does NOT extend the root config: that one is tuned for the
+     Angular browser build (ES2022 modules, bundler resolution, and
+     noPropertyAccessFromIndexSignature, which rejects `req.query['id']`-style
+     access). Serverless functions run on Node and need their own settings. */
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "noEmit": true
+  },
+  "include": ["**/*.ts"]
+}

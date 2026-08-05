@@ -6,9 +6,9 @@ import { DEALER_API } from '../config/dealer-api.config';
 
 /**
  * Angular's default query-string encoder deliberately un-escapes `+`, `/` and
- * `=` after calling encodeURIComponent. That corrupts base64 values: the apiKey
- * contains `/` and a trailing `=`, and a `+` in any future key would reach the
- * server as a space. Encoding strictly keeps the credentials intact.
+ * `=` after calling encodeURIComponent, which silently corrupts any value
+ * containing them — a `+` reaches the server as a space. Encode strictly so
+ * lot numbers and free-text fields arrive exactly as typed.
  */
 class StrictHttpParameterCodec implements HttpParameterCodec {
   encodeKey(key: string): string {
@@ -85,20 +85,13 @@ export class DealerApiService {
     return new HttpParams({ encoder: PARAM_CODEC });
   }
 
-  /** Query params carrying the dealer credentials, required by priced calls. */
-  private authParams(): HttpParams {
-    return this.newParams()
-      .set('dealerId', DEALER_API.dealerId)
-      .set('apiKey', DEALER_API.apiKey);
-  }
-
   private dropdown(endpoint: string, params?: HttpParams): Observable<DropDownItem[]> {
     return this.http
       .get<any>(this.url(endpoint), { params })
       .pipe(map((body) => unwrapArray(body).map(normaliseItem)));
   }
 
-  // ── Dropdown sources (no credentials required) ────────────────────
+  // ── Dropdown sources ──────────────────────────────────────────────
 
   getAuctions(): Observable<DropDownItem[]> {
     return this.dropdown('AuctionsDropDownForDealerApi');
@@ -128,10 +121,10 @@ export class DealerApiService {
     return this.dropdown('DeliveryPortsDropDownForDealerApi');
   }
 
-  // ── Priced calls (credentials required) ───────────────────────────
+  // ── Priced calls ──────────────────────────────────────────────────
 
   private queryParams(q: CalculatorQuery, includeDeliveryPort: boolean): HttpParams {
-    let params = this.authParams()
+    let params = this.newParams()
       .set('auctionId', String(q.auctionId ?? ''))
       .set('stateId', String(q.stateId ?? ''))
       .set('auctionCityId', String(q.auctionCityId ?? ''))
@@ -164,7 +157,7 @@ export class DealerApiService {
 
   parseCarFromIAAI(carTypeId: any, lot: string): Observable<any> {
     return this.http.get<any>(this.url('ParseCarFromIAAIForDealerApi'), {
-      params: this.authParams()
+      params: this.newParams()
         .set('carTypeId', String(carTypeId ?? ''))
         .set('lot', lot),
     });
@@ -172,7 +165,7 @@ export class DealerApiService {
 
   parseCarFromCopart(carTypeId: any, lot: string): Observable<any> {
     return this.http.get<any>(this.url('ParseCarFromCopartForDealerApi'), {
-      params: this.authParams()
+      params: this.newParams()
         .set('carTypeId', String(carTypeId ?? ''))
         .set('lot', lot),
     });

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { DealerApiService, DropDownItem, CalculatorQuery } from '../services/dealer-api.service';
-import { hasDealerCredentials } from '../config/dealer-api.config';
 
 /** One line of the rendered result table. */
 interface ResultRow {
@@ -46,7 +45,6 @@ export class CalculatorComponent implements OnInit {
 
   error = '';
   lotError = '';
-  credentialsMissing = !hasDealerCredentials();
 
   resultRows: ResultRow[] = [];
   serviceRows: ResultRow[] = [];
@@ -217,13 +215,19 @@ export class CalculatorComponent implements OnInit {
 
   private describeError(err: any): string {
     if (err?.status === 0) {
-      return 'სერვერთან კავშირი ვერ დამყარდა. სავარაუდოდ CORS-ის შეზღუდვაა — API უნდა უშვებდეს ამ დომენს, ან საჭიროა proxy.';
+      return 'სერვერთან კავშირი ვერ დამყარდა.';
     }
-    if (err?.status === 401 || err?.status === 403) {
-      return 'ავტორიზაცია ვერ მოხერხდა — შეამოწმეთ dealerId და apiKey.';
+    if (err?.status === 401) {
+      return 'სესია ამოიწურა — გაიარეთ ავტორიზაცია ხელახლა.';
+    }
+    if (err?.status === 502) {
+      return 'ტრანსპორტის API დროებით მიუწვდომელია. სცადეთ მოგვიანებით.';
     }
     if (err?.status) {
-      return `API-მ დააბრუნა შეცდომა ${err.status}. ${err?.error?.message || err?.message || ''}`.trim();
+      return (
+        err?.error?.error ||
+        `შეცდომა ${err.status}. ${err?.error?.message || err?.message || ''}`.trim()
+      );
     }
     return err?.message || 'უცნობი შეცდომა.';
   }

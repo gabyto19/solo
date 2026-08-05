@@ -3,6 +3,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/solov2/browser",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "comment": "SPA fallback for client-side routes. The negative lookahead keeps /api/* out, so serverless functions are never swallowed by index.html.",
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ]
 }

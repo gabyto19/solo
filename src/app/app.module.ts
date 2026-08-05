@@ -18,6 +18,7 @@ import { ListComponent } from './list/list.component';
 import { PasswordComponent } from './password/password.component';
 import { PdfEditorComponent } from './pdf-editor/pdf-editor.component';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CalculatorComponent } from './calculator/calculator.component';
     ListComponent,
     PasswordComponent,
     PdfEditorComponent,
-    CalculatorComponent
+    CalculatorComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
