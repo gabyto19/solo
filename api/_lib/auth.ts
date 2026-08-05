@@ -1,19 +1,42 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
-import { SignJWT, jwtVerify } from 'jose';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { sql, UserRow } from './db';
 
 const COOKIE_NAME = 'solo_session';
 const SESSION_DAYS = 7;
 
-function secret(): Uint8Array {
+function secret(): string {
   const value = process.env.SESSION_SECRET;
   if (!value) {
     // A missing secret must not silently fall back to a shared default —
     // that would let anyone mint a valid session token.
     throw new Error('SESSION_SECRET is not configured.');
   }
-  return new TextEncoder().encode(value);
+  return value;
+}
+
+/**
+ * HS256 tokens signed with node:crypto rather than a JWT library.
+ *
+ * `jose` v6 is ESM-only — its package exports declare no `require` condition —
+ * so a CommonJS build of these functions crashed on import with ERR_REQUIRE_ESM
+ * under any runtime that does not allow require() of ES modules. Node's own
+ * crypto has no such constraint and needs no dependency.
+ */
+interface SessionPayload {
+  uid: number;
+  role: string;
+  iat: number;
+  exp: number;
+}
+
+function sign(data: string): string {
+  return createHmac('sha256', secret()).update(data).digest('base64url');
+}
+
+function encodeSegment(value: unknown): string {
+  return Buffer.from(JSON.stringify(value)).toString('base64url');
 }
 
 export async function hashPassword(plain: string): Promise<string> {
@@ -25,11 +48,42 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 }
 
 export async function createSessionToken(user: { id: number; role: string }): Promise<string> {
-  return new SignJWT({ uid: user.id, role: user.role })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime(`${SESSION_DAYS}d`)
-    .sign(secret());
+  const issuedAt = Math.floor(Date.now() / 1000);
+  const header = encodeSegment({ alg: 'HS256', typ: 'JWT' });
+  const payload = encodeSegment({
+    uid: user.id,
+    role: user.role,
+    iat: issuedAt,
+    exp: issuedAt + SESSION_DAYS * 24 * 60 * 60,
+  });
+  const body = `${header}.${payload}`;
+  return `${body}.${sign(body)}`;
+}
+
+/** Verify signature and expiry, returning the payload or null. */
+function verifySessionPayload(token: string): SessionPayload | null {
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [header, payload, signature] = parts;
+
+  const expected = Buffer.from(sign(`${header}.${payload}`));
+  const received = Buffer.from(signature);
+  // Length is checked first because timingSafeEqual throws on a mismatch.
+  if (expected.length !== received.length || !timingSafeEqual(expected, received)) {
+    return null;
+  }
+
+  let claims: SessionPayload;
+  try {
+    claims = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+  } catch {
+    return null;
+  }
+
+  if (typeof claims?.exp !== 'number' || claims.exp <= Math.floor(Date.now() / 1000)) {
+    return null;
+  }
+  return claims;
 }
 
 export function setSessionCookie(res: VercelResponse, token: string): void {
@@ -66,13 +120,10 @@ export async function getCurrentUser(req: VercelRequest): Promise<UserRow | null
   const token = readCookie(req, COOKIE_NAME);
   if (!token) return null;
 
-  let uid: number;
-  try {
-    const { payload } = await jwtVerify(token, secret());
-    uid = Number(payload.uid);
-  } catch {
-    return null;
-  }
+  const claims = verifySessionPayload(token);
+  if (!claims) return null;
+
+  const uid = Number(claims.uid);
   if (!uid) return null;
 
   const rows = (await sql`

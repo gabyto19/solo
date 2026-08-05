@@ -26,7 +26,6 @@
     "file-saver": "^2.0.5",
     "fontkit": "^2.0.4",
     "html2canvas": "^1.4.1",
-    "jose": "^6.2.8",
     "jspdf": "^2.5.2",
     "pdf-lib": "^1.17.1",
     "rxjs": "~7.8.0",
