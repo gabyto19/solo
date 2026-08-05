@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, StateRow } from '../_lib/db';
+import { sql, StateRow, describeServerError } from '../_lib/db';
 import { allowMethods, requireAdmin } from '../_lib/auth';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -54,6 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).json({ state: { ...rows[0], price: Number(rows[0].price) } });
   } catch (err: any) {
     console.error('state update failed:', err);
-    res.status(500).json({ error: 'სერვერის შეცდომა.' });
+    const d = describeServerError(err);
+    res.status(d.status).json({ error: d.error });
   }
 }

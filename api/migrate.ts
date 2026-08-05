@@ -19,8 +19,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(500).json({ error: 'MIGRATE_SECRET არ არის კონფიგურირებული.' });
     return;
   }
-  if (String(req.query['secret'] || '') !== expected) {
-    res.status(403).json({ error: 'არასწორი secret.' });
+  // Accept the secret in a header as well as the query string. Secrets are
+  // usually base64 (`openssl rand -base64 32`), and a `+` in a query string is
+  // decoded as a space — so an un-encoded secret silently never matches. The
+  // header carries the value verbatim and avoids the trap entirely.
+  const provided =
+    (req.headers['x-migrate-secret'] as string | undefined) ||
+    String(req.query['secret'] || '');
+
+  if (provided !== expected) {
+    res.status(403).json({
+      error:
+        'არასწორი secret. თუ query-ში აგზავნით, გამოიყენეთ encodeURIComponent — ' +
+        'base64-ის `+` სიმბოლო URL-ში ჰარედ იკითხება.',
+    });
     return;
   }
   if (!hasDatabase()) {

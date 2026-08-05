@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql } from '../_lib/db';
+import { sql, describeServerError } from '../_lib/db';
 import {
   allowMethods,
   createSessionToken,
@@ -40,6 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (err: any) {
     console.error('login failed:', err);
-    res.status(500).json({ error: 'სერვერის შეცდომა.' });
+    const d = describeServerError(err);
+    res.status(d.status).json({ error: d.error });
   }
 }
