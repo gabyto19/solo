@@ -78,6 +78,39 @@ const BY_CODE = new Map(US_STATES.map((s) => [s.code, s]));
 const BY_NAME = new Map(US_STATES.map((s) => [s.name.replace(/[^A-Z]/g, ''), s]));
 
 /**
+ * Pull the state code out of a city label.
+ *
+ * Auctions label their locations differently — "AK - Anchorage" from one,
+ * "Anchorage, AK" or "Anchorage (AK)" from another — so each position where a
+ * code conventionally appears is tried in turn.
+ *
+ * Position matters. Scanning for any two-letter token would read "LA PORTE"
+ * as Louisiana, so a code is only accepted where one is actually expected:
+ * before a dash at the start, or at the very end.
+ */
+export function cityLabelStateCode(label: string | null | undefined): string | null {
+  if (!label) return null;
+  const text = String(label).trim();
+
+  const patterns = [
+    /^([A-Za-z]{2})\s*[-–—]/,      // "AK - Anchorage", "AK-Anchorage"
+    /[-–—]\s*([A-Za-z]{2})\s*$/,   // "Anchorage - AK"
+    /\(\s*([A-Za-z]{2})\s*\)\s*$/, // "Anchorage (AK)"
+    /,\s*([A-Za-z]{2})\s*$/,       // "Anchorage, AK"
+    /\s([A-Za-z]{2})\s*$/,         // "Anchorage AK"
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      const code = match[1].toUpperCase();
+      if (BY_CODE.has(code)) return code;
+    }
+  }
+  return null;
+}
+
+/**
  * Reduce a label to its state code, so "AK", "Alaska" and "Alaska (AK)" all
  * compare equal. Returns null when the label names no state we know.
  */

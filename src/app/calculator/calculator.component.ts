@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { DealerApiService, DropDownItem, CalculatorQuery } from '../services/dealer-api.service';
-import { toStateCode } from '../services/us-states';
+import { toStateCode, cityLabelStateCode } from '../services/us-states';
 
 /** One line of the rendered result table. */
 interface ResultRow {
@@ -194,11 +194,9 @@ export class CalculatorComponent implements OnInit {
       if (stateText) return toStateCode(String(stateText)) === stateCode;
     }
 
-    // Only a leading two-letter token is a state code; without this a city
-    // such as "WINSTON-SALEM" would offer "WINSTON" as one.
-    const prefix = city.name.split(/[-–,(]/)[0].trim();
-    if (!/^[A-Za-z]{2}$/.test(prefix)) return false;
-    return toStateCode(prefix) === stateCode;
+    // Each auction labels its locations differently, so the code is looked for
+    // in every position one conventionally appears in.
+    return cityLabelStateCode(city.name) === stateCode;
   }
 
   get canCalculate(): boolean {
