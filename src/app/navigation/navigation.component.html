@@ -1,4 +1,4 @@
-<a class="brand" routerLink="/list">
+<a class="brand" routerLink="/calculator">
   <img src="/assets/imgs/logo.png" alt="Solo Auto Import" />
 </a>
 
@@ -7,7 +7,6 @@
   <div class="menu-container">
     <a routerLink="/deposit" routerLinkActive="active">დეპოზიტი</a>
     <a routerLink="/vehicle" routerLinkActive="active">საფასური</a>
-    <a routerLink="/list" routerLinkActive="active">ფასები</a>
     <a routerLink="/calculator" routerLinkActive="active">კალკულატორი</a>
     <a routerLink="/admin" routerLinkActive="active" *ngIf="user.role === 'admin'">ადმინი</a>
     <button type="button" class="logout" (click)="logout()">გასვლა</button>
@@ -30,7 +29,6 @@
   <div class="mobile-menu" [class.active]="menuOpen">
     <a routerLink="/deposit" (click)="closeMenu()">დეპოზიტი</a>
     <a routerLink="/vehicle" (click)="closeMenu()">საფასური</a>
-    <a routerLink="/list" (click)="closeMenu()">ფასები</a>
     <a routerLink="/calculator" (click)="closeMenu()">კალკულატორი</a>
     <a routerLink="/admin" (click)="closeMenu()" *ngIf="user.role === 'admin'">ადმინი</a>
     <button type="button" class="logout" (click)="logout()">გასვლა</button>

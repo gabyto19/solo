@@ -16,8 +16,14 @@ interface ResultRow {
 export class CalculatorComponent implements OnInit {
   auctions: DropDownItem[] = [];
   states: DropDownItem[] = [];
-  cities: DropDownItem[] = [];
   carTypes: DropDownItem[] = [];
+
+  /** Every city the chosen auction serves, before the state narrows it down. */
+  private allCities: DropDownItem[] = [];
+  /** What the city dropdown actually offers: allCities, narrowed by state. */
+  cities: DropDownItem[] = [];
+  /** Set when the state could not be matched to any city, so the list is unfiltered. */
+  cityFilterUnavailable = false;
   internationalPorts: DropDownItem[] = [];
   deliveryPorts: DropDownItem[] = [];
 
@@ -87,13 +93,15 @@ export class CalculatorComponent implements OnInit {
 
   onAuctionChange(): void {
     this.form.auctionCityId = '';
+    this.allCities = [];
     this.cities = [];
     if (!this.form.auctionId) return;
 
     this.loadingCities = true;
     this.api.getAuctionCities(this.form.auctionId).subscribe({
       next: (cities) => {
-        this.cities = cities;
+        this.allCities = cities;
+        this.applyStateFilter();
         this.loadingCities = false;
       },
       error: (err) => {
@@ -101,6 +109,71 @@ export class CalculatorComponent implements OnInit {
         this.loadingCities = false;
       },
     });
+  }
+
+  onStateChange(): void {
+    this.applyStateFilter();
+  }
+
+  /** Narrow the city list to the chosen state, dropping a now-invalid choice. */
+  private applyStateFilter(): void {
+    const state = this.states.find((s) => String(s.id) === String(this.form.stateId));
+
+    if (!state) {
+      this.cities = this.allCities;
+      this.cityFilterUnavailable = false;
+    } else {
+      const matched = this.allCities.filter((c) => this.cityBelongsToState(c, state));
+      // An empty dropdown would be a dead end, so fall back to the full list
+      // and say so rather than silently pretending the filter worked.
+      this.cityFilterUnavailable = matched.length === 0 && this.allCities.length > 0;
+      this.cities = this.cityFilterUnavailable ? this.allCities : matched;
+    }
+
+    if (!this.cities.some((c) => String(c.id) === String(this.form.auctionCityId))) {
+      this.form.auctionCityId = '';
+    }
+  }
+
+  /**
+   * Whether a city sits in the given state.
+   *
+   * The API's field names are undocumented, so this reads the signals in order
+   * of how much they can be trusted: an explicit state id on the city, then an
+   * explicit state code or name, and only then the state prefix these lists
+   * conventionally carry in the city name ("NJ-SAYREVILLE").
+   */
+  private cityBelongsToState(city: DropDownItem, state: DropDownItem): boolean {
+    const raw = city.raw;
+
+    if (raw && typeof raw === 'object') {
+      const stateId = raw.stateId ?? raw.StateId ?? raw.stateID ?? raw.StateID;
+      // A city that carries a state id settles the question either way.
+      if (stateId !== undefined && stateId !== null && stateId !== '') {
+        return String(stateId) === String(state.id);
+      }
+
+      const stateText =
+        raw.state ?? raw.State ?? raw.stateName ?? raw.StateName ??
+        raw.stateCode ?? raw.StateCode ?? raw.stateAbbr ?? raw.StateAbbr;
+      if (stateText) return this.sameState(String(stateText), state.name);
+    }
+
+    const prefix = city.name.split(/[-–,(]/)[0].trim();
+    return this.sameState(prefix, state.name);
+  }
+
+  /** Compare two state labels, tolerating a code standing in for a full name. */
+  private sameState(a: string, b: string): boolean {
+    const norm = (v: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const x = norm(a);
+    const y = norm(b);
+    if (!x || !y) return false;
+    if (x === y) return true;
+    // "NJ" against "NEW JERSEY", or the reverse.
+    if (x.length === 2) return y.startsWith(x);
+    if (y.length === 2) return x.startsWith(y);
+    return false;
   }
 
   get canCalculate(): boolean {
@@ -175,7 +248,9 @@ export class CalculatorComponent implements OnInit {
       deliveryPortId: '',
       title: '',
     };
+    this.allCities = [];
     this.cities = [];
+    this.cityFilterUnavailable = false;
     this.serviceRows = [];
     this.error = '';
   }

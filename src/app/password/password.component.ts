@@ -30,7 +30,7 @@ export class PasswordComponent {
     this.auth.login(email, this.password).subscribe({
       next: () => {
         this.submitting = false;
-        this.router.navigate(['/list']);
+        this.router.navigate(['/calculator']);
       },
       error: (err) => {
         this.submitting = false;
