@@ -25,6 +25,35 @@ function matchesAny(name: string, tokens: string[]): boolean {
   return tokens.some((token) => new RegExp(`\\b${token}\\b`).test(lower));
 }
 
+/**
+ * The four prices shown after a calculation, in display order, with the API
+ * field each comes from.
+ *
+ * titlePrice and internalTransportationPrice are confirmed; the delivery and
+ * total fields are not, so several conventional spellings are accepted for
+ * them. Keys are compared with case and punctuation removed.
+ */
+const PRICE_FIELDS: ReadonlyArray<{ label: string; keys: string[] }> = [
+  { label: 'Title-ის ფასი', keys: ['titleprice'] },
+  {
+    label: 'ინტერნაციონალური ტრანსპორტირების ფასი',
+    keys: ['internaltransportationprice', 'internationaltransportationprice'],
+  },
+  {
+    label: 'ჩამოყვანის ფასი',
+    keys: [
+      'deliveryprice', 'deliverycost', 'shippingprice', 'shippingcost',
+      'transportationprice', 'oceanfreight', 'freightprice', 'seafreight',
+    ],
+  },
+  {
+    label: 'ჯამში ფასი',
+    keys: ['totalprice', 'total', 'totalcost', 'grandtotal', 'finalprice', 'sumprice'],
+  },
+];
+
+const normaliseKey = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
+
 @Component({
   selector: 'app-calculator',
   templateUrl: './calculator.component.html',
@@ -222,7 +251,7 @@ export class CalculatorComponent implements OnInit {
     // dealer API quota for nothing.
     this.api.getServicePrices(this.form).subscribe({
       next: (res) => {
-        this.serviceRows = this.flatten(res);
+        this.serviceRows = this.toPriceRows(res);
         this.calculating = false;
       },
       error: (err) => {
@@ -251,7 +280,7 @@ export class CalculatorComponent implements OnInit {
 
     call.subscribe({
       next: (res) => {
-        this.lotResult = this.flatten(res);
+        this.lotResult = this.toPriceRows(res);
         this.lotLoading = false;
       },
       error: (err) => {
@@ -276,12 +305,47 @@ export class CalculatorComponent implements OnInit {
     this.cityFilterUnavailable = false;
     this.serviceRows = [];
     this.error = '';
+
+    // The lot panel is part of the same result, so it clears with everything else.
+    this.lot = '';
+    this.lotCarTypeId = '';
+    this.lotResult = [];
+    this.lotError = '';
+  }
+
+  /**
+   * Reduce a response to the four prices, labelled in Georgian.
+   *
+   * Falls back to showing the response as-is when none of the fields are
+   * recognised, so an unexpected shape leaves a readable result instead of an
+   * empty panel.
+   */
+  private toPriceRows(body: any): ResultRow[] {
+    const found = new Map<string, string>();
+    const collect = (value: any) => {
+      if (!value || typeof value !== 'object') return;
+      for (const [key, inner] of Object.entries(value)) {
+        if (inner && typeof inner === 'object') collect(inner);
+        else if (inner !== null && inner !== undefined && inner !== '') {
+          found.set(normaliseKey(key), String(inner));
+        }
+      }
+    };
+    collect(body);
+
+    const rows: ResultRow[] = [];
+    for (const field of PRICE_FIELDS) {
+      const key = field.keys.find((k) => found.has(k));
+      if (key) rows.push({ label: field.label, value: found.get(key)! });
+    }
+
+    return rows.length ? rows : this.flatten(body);
   }
 
   /**
    * The response shape is not documented in the exported collection, so the
    * result is rendered generically: every scalar field becomes a labelled row.
-   * This displays correct data whatever the field names turn out to be.
+   * Used only when none of the known price fields are present.
    */
   private flatten(body: any, prefix = ''): ResultRow[] {
     if (body === null || body === undefined) return [];
