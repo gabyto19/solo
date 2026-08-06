@@ -4,6 +4,9 @@
 
   <div class="notice error" *ngIf="error">{{ error }}</div>
   <div class="notice info" *ngIf="loadingOptions">იტვირთება…</div>
+  <div class="notice warn" *ngIf="restrictionFailed">
+    აუქციონების ან პორტების სია მოსალოდნელ დასახელებებს არ შეიცავს — ნაჩვენებია სრული სია.
+  </div>
 
   <div class="card" *ngIf="!loadingOptions">
     <form (ngSubmit)="calculate()">
