@@ -9,6 +9,22 @@ interface ResultRow {
   value: string;
 }
 
+/**
+ * The upstream lists carry far more options than this business uses, so both
+ * are narrowed to the ones actually offered.
+ *
+ * Matched as whole words rather than by equality, since the API's exact
+ * labelling is unverified — "ACV" and "ACV Auctions" should both pass, while
+ * a word boundary keeps a short token from matching inside another word.
+ */
+const ALLOWED_AUCTIONS = ['copart', 'iaai', 'manheim', 'acv'];
+const ALLOWED_DELIVERY_PORTS = ['poti', 'batumi'];
+
+function matchesAny(name: string, tokens: string[]): boolean {
+  const lower = String(name || '').toLowerCase();
+  return tokens.some((token) => new RegExp(`\\b${token}\\b`).test(lower));
+}
+
 @Component({
   selector: 'app-calculator',
   templateUrl: './calculator.component.html',
@@ -25,6 +41,8 @@ export class CalculatorComponent implements OnInit {
   cities: DropDownItem[] = [];
   /** Set when the state could not be matched to any city, so the list is unfiltered. */
   cityFilterUnavailable = false;
+  /** Set when an allowlist matched nothing, so that list is shown in full. */
+  restrictionFailed = false;
   internationalPorts: DropDownItem[] = [];
   deliveryPorts: DropDownItem[] = [];
 
@@ -78,11 +96,11 @@ export class CalculatorComponent implements OnInit {
       deliveryPorts: this.api.getDeliveryPorts(),
     }).subscribe({
       next: (res) => {
-        this.auctions = res.auctions;
+        this.auctions = this.restrict(res.auctions, ALLOWED_AUCTIONS);
         this.states = res.states;
         this.carTypes = res.carTypes;
         this.internationalPorts = res.internationalPorts;
-        this.deliveryPorts = res.deliveryPorts;
+        this.deliveryPorts = this.restrict(res.deliveryPorts, ALLOWED_DELIVERY_PORTS);
         this.loadingOptions = false;
       },
       error: (err) => {
@@ -90,6 +108,20 @@ export class CalculatorComponent implements OnInit {
         this.loadingOptions = false;
       },
     });
+  }
+
+  /**
+   * Keep only the allowed options. If none match, the labelling has changed
+   * upstream — keep the full list rather than leaving a dropdown that cannot
+   * be used at all, and say so on the page instead of failing silently.
+   */
+  private restrict(items: DropDownItem[], tokens: string[]): DropDownItem[] {
+    const kept = items.filter((item) => matchesAny(item.name, tokens));
+    if (kept.length === 0 && items.length > 0) {
+      this.restrictionFailed = true;
+      return items;
+    }
+    return kept;
   }
 
   onAuctionChange(): void {
