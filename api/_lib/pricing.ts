@@ -49,22 +49,23 @@ function collectKeys(value: unknown, into: Set<string>): void {
 /**
  * Add the markup to one value, keeping whatever formatting it arrived with —
  * a number stays a number, and a string keeps its currency symbol, thousands
- * separators and decimal places.
+ * separators and decimal places. Returns undefined when the value holds no
+ * number to add to.
  */
-function addMarkup(value: unknown): unknown {
+function addMarkup(value: unknown): unknown | undefined {
   if (typeof value === 'number') {
-    return Number.isFinite(value) ? value + USER_MARKUP_USD : value;
+    return Number.isFinite(value) ? value + USER_MARKUP_USD : undefined;
   }
-  if (typeof value !== 'string') return value;
+  if (typeof value !== 'string') return undefined;
 
   // The number must end on a digit, so a separator class that also accepts
   // spaces ("1 625") does not swallow the space in "1625 USD".
   const match = value.match(/-?\d(?:[\d,\s]*\d)?(?:\.\d+)?/);
-  if (!match || match.index === undefined) return value;
+  if (!match || match.index === undefined) return undefined;
 
   const raw = match[0];
   const numeric = Number(raw.replace(/[,\s]/g, ''));
-  if (!Number.isFinite(numeric)) return value;
+  if (!Number.isFinite(numeric)) return undefined;
 
   const decimals = (raw.split('.')[1] || '').length;
   let rendered = (numeric + USER_MARKUP_USD).toFixed(decimals);
@@ -76,32 +77,54 @@ function addMarkup(value: unknown): unknown {
   return value.slice(0, match.index) + rendered + value.slice(match.index + raw.length);
 }
 
-/** Rebuild the body with every occurrence of `target` marked up. */
-function rewrite(value: unknown, target: string): unknown {
-  if (Array.isArray(value)) return value.map((item) => rewrite(item, target));
-  if (!value || typeof value !== 'object') return value;
-
-  const out: Record<string, unknown> = {};
-  for (const [key, inner] of Object.entries(value as Record<string, unknown>)) {
-    out[key] = normalise(key) === target ? addMarkup(inner) : rewrite(inner, target);
+/** The first field whose normalised name matches, under its original spelling. */
+function findField(value: unknown, target: string): { key: string; value: unknown } | null {
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const hit = findField(item, target);
+      if (hit) return hit;
+    }
+    return null;
   }
-  return out;
+  if (!value || typeof value !== 'object') return null;
+
+  const entries = Object.entries(value as Record<string, unknown>);
+  // Own keys before nested ones, so an outer total is preferred to a deeper one.
+  for (const [key, inner] of entries) {
+    if (normalise(key) === target) return { key, value: inner };
+  }
+  for (const [, inner] of entries) {
+    const hit = findField(inner, target);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 /**
- * Apply the markup to the response body's total.
+ * Reduce a price response to what a non-administrator is quoted: the total,
+ * plus the margin, and nothing else.
  *
- * Only the one field the calculator shows as "ჯამში ფასი" is touched, so the
- * individual line items still report what the dealer API said. Returns the
- * body unchanged when no total can be identified — better an unmarked price
- * than a markup silently landing on some unrelated number.
+ * The line items are dropped rather than merely hidden by the page. Left in
+ * the response they would sit in the browser's network tab, where they both
+ * expose the internal breakdown and give away the margin — the parts no
+ * longer sum to the total.
+ *
+ * Returns the body untouched when no total can be identified or the field
+ * holds no number. Passing an unmarked price through is bad; quoting a margin
+ * added to some unrelated field, or blanking the result entirely, is worse.
  */
-export function applyUserMarkup(body: unknown): { body: unknown; applied: boolean } {
+export function quoteForUser(body: unknown): { body: unknown; applied: boolean } {
   const keys = new Set<string>();
   collectKeys(body, keys);
 
   const target = TOTAL_KEYS.find((key) => keys.has(key));
   if (!target) return { body, applied: false };
 
-  return { body: rewrite(body, target), applied: true };
+  const field = findField(body, target);
+  if (!field) return { body, applied: false };
+
+  const marked = addMarkup(field.value);
+  if (marked === undefined) return { body, applied: false };
+
+  return { body: { [field.key]: marked }, applied: true };
 }
