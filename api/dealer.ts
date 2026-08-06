@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { allowMethods, requireUser } from './_lib/auth';
-import { applyUserMarkup, isPricedEndpoint, USER_MARKUP_USD } from './_lib/pricing';
+import { isPricedEndpoint, quoteForUser, USER_MARKUP_USD } from './_lib/pricing';
 
 const UPSTREAM = 'https://apidealer.payauto.de/api/ApiForDealers';
 
@@ -44,7 +44,8 @@ function resolveEndpoint(req: VercelRequest): string {
 }
 
 /**
- * Add the margin to a price response, returning it re-serialised.
+ * Rewrite a price response into the quote a non-administrator gets, returning
+ * it re-serialised.
  *
  * A body that cannot be parsed, or that carries no field recognisable as the
  * total, is passed through untouched — the alternative is a margin landing on
@@ -52,7 +53,7 @@ function resolveEndpoint(req: VercelRequest): string {
  * shown to a customer is a billing error, not a cosmetic one, and the log is
  * the only place it would otherwise be visible.
  */
-function markUp(text: string, endpoint: string): string {
+function quote(text: string, endpoint: string): string {
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);
@@ -61,7 +62,7 @@ function markUp(text: string, endpoint: string): string {
     return text;
   }
 
-  const { body, applied } = applyUserMarkup(parsed);
+  const { body, applied } = quoteForUser(parsed);
   if (!applied) {
     console.error(`markup skipped: no total field found in ${endpoint} response`);
     return text;
@@ -111,11 +112,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
     let text = await upstream.text();
 
-    // Non-administrators are quoted the total plus the house margin. Doing it
-    // here rather than in the page means the unmarked figure never reaches
-    // the browser at all.
+    // Non-administrators are quoted the total plus the house margin, and
+    // nothing else. Doing it here rather than in the page means neither the
+    // unmarked figure nor the breakdown behind it reaches the browser at all.
     if (upstream.ok && user.role !== 'admin' && isPricedEndpoint(endpoint)) {
-      text = markUp(text, endpoint);
+      text = quote(text, endpoint);
     }
 
     res.status(upstream.status);

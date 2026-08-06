@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { DealerApiService, DropDownItem, CalculatorQuery } from '../services/dealer-api.service';
+import { AuthService } from '../services/auth.service';
 import { toStateCode, cityLabelStateCode } from '../services/us-states';
 
 /** One line of the rendered result table. */
@@ -13,21 +14,30 @@ interface ResultRow {
  * The upstream lists carry far more options than this business uses, so both
  * are narrowed to the ones actually offered.
  *
- * Matched as whole words rather than by equality, since the API's exact
- * labelling is unverified — "ACV" and "ACV Auctions" should both pass, while
- * a word boundary keeps a short token from matching inside another word.
+ * An option passes when every token of any one group appears in its label.
+ * Matching on words rather than equality lets "ACV" and "ACV Auctions" both
+ * pass; requiring the country as well is what separates POTI GEORGIA from the
+ * POTI ARMENIA and POTI AZERBAIJAN entries the same list carries.
  */
-const ALLOWED_AUCTIONS = ['copart', 'iaai', 'manheim', 'acv'];
-const ALLOWED_DELIVERY_PORTS = ['poti', 'batumi'];
+const ALLOWED_AUCTIONS = [['copart'], ['iaai'], ['manheim'], ['acv']];
+const ALLOWED_DELIVERY_PORTS = [['poti', 'georgia'], ['batumi', 'georgia']];
 
-function matchesAny(name: string, tokens: string[]): boolean {
+function matchesAny(name: string, groups: string[][]): boolean {
   const lower = String(name || '').toLowerCase();
-  return tokens.some((token) => new RegExp(`\\b${token}\\b`).test(lower));
+  return groups.some((group) =>
+    group.every((token) => new RegExp(`\\b${token}\\b`).test(lower))
+  );
 }
 
 /**
- * The four prices shown after a calculation, in display order, with the API
- * field each comes from.
+ * Names the total may arrive under, most specific first. Kept in step with
+ * TOTAL_KEYS in api/_lib/pricing.ts, which marks up the same field.
+ */
+const TOTAL_KEYS = ['totalprice', 'total', 'totalcost', 'grandtotal', 'finalprice', 'sumprice'];
+
+/**
+ * The four prices an administrator sees after a calculation, in display order,
+ * with the API field each comes from.
  *
  * titlePrice and internalTransportationPrice are confirmed; the delivery and
  * total fields are not, so several conventional spellings are accepted for
@@ -46,10 +56,17 @@ const PRICE_FIELDS: ReadonlyArray<{ label: string; keys: string[] }> = [
       'transportationprice', 'oceanfreight', 'freightprice', 'seafreight',
     ],
   },
-  {
-    label: 'ჯამში ფასი',
-    keys: ['totalprice', 'total', 'totalcost', 'grandtotal', 'finalprice', 'sumprice'],
-  },
+  { label: 'ჯამში ფასი', keys: TOTAL_KEYS },
+];
+
+/**
+ * What a `user` sees instead: the one all-in figure, under the name the
+ * customer is quoted. The breakdown behind it is internal, and the proxy
+ * already withholds it — this list is what turns the remaining field into a
+ * row, not what hides the others.
+ */
+const USER_PRICE_FIELDS: ReadonlyArray<{ label: string; keys: string[] }> = [
+  { label: 'ტრანსპორტირების ფასი', keys: TOTAL_KEYS },
 ];
 
 const normaliseKey = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -106,7 +123,7 @@ export class CalculatorComponent implements OnInit {
 
   serviceRows: ResultRow[] = [];
 
-  constructor(private api: DealerApiService) {}
+  constructor(private api: DealerApiService, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.loadOptions();
@@ -144,8 +161,8 @@ export class CalculatorComponent implements OnInit {
    * upstream — keep the full list rather than leaving a dropdown that cannot
    * be used at all, and say so on the page instead of failing silently.
    */
-  private restrict(items: DropDownItem[], tokens: string[]): DropDownItem[] {
-    const kept = items.filter((item) => matchesAny(item.name, tokens));
+  private restrict(items: DropDownItem[], groups: string[][]): DropDownItem[] {
+    const kept = items.filter((item) => matchesAny(item.name, groups));
     if (kept.length === 0 && items.length > 0) {
       this.restrictionFailed = true;
       return items;
@@ -314,7 +331,9 @@ export class CalculatorComponent implements OnInit {
   }
 
   /**
-   * Reduce a response to the four prices, labelled in Georgian.
+   * Reduce a response to the prices this account is shown, labelled in
+   * Georgian — the four-line breakdown for an administrator, the single
+   * all-in figure for everyone else.
    *
    * Falls back to showing the response as-is when none of the fields are
    * recognised, so an unexpected shape leaves a readable result instead of an
@@ -334,7 +353,7 @@ export class CalculatorComponent implements OnInit {
     collect(body);
 
     const rows: ResultRow[] = [];
-    for (const field of PRICE_FIELDS) {
+    for (const field of this.auth.isAdmin ? PRICE_FIELDS : USER_PRICE_FIELDS) {
       const key = field.keys.find((k) => found.has(k));
       if (key) rows.push({ label: field.label, value: found.get(key)! });
     }
