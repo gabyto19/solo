@@ -18,19 +18,22 @@
         </div>
 
         <div class="field">
+          <label for="state">შტატი</label>
+          <select id="state" name="state" [(ngModel)]="form.stateId" (ngModelChange)="onStateChange()">
+            <option value="">— აირჩიეთ —</option>
+            <option *ngFor="let s of states" [ngValue]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label for="city">აუქციონის ქალაქი</label>
           <select id="city" name="city" [(ngModel)]="form.auctionCityId" [disabled]="!form.auctionId || loadingCities">
             <option value="">{{ loadingCities ? 'იტვირთება…' : '— აირჩიეთ —' }}</option>
             <option *ngFor="let c of cities" [ngValue]="c.id">{{ c.name }}</option>
           </select>
-        </div>
-
-        <div class="field">
-          <label for="state">შტატი</label>
-          <select id="state" name="state" [(ngModel)]="form.stateId">
-            <option value="">— აირჩიეთ —</option>
-            <option *ngFor="let s of states" [ngValue]="s.id">{{ s.name }}</option>
-          </select>
+          <small class="hint" *ngIf="cityFilterUnavailable">
+            შტატით გაფილტვრა ვერ მოხერხდა — ნაჩვენებია ყველა ქალაქი.
+          </small>
         </div>
 
         <div class="field">

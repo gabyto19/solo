@@ -31,6 +31,12 @@ const PARAM_CODEC = new StrictHttpParameterCodec();
 export interface DropDownItem {
   id: any;
   name: string;
+  /**
+   * The untouched item from the API. Normalising to id/name is enough for
+   * rendering, but relating one dropdown to another — cities to their state —
+   * needs whatever extra fields the response happens to carry.
+   */
+  raw?: any;
 }
 
 /** Everything the price/calculator endpoints need to identify a route. */
@@ -62,14 +68,14 @@ function unwrapArray(body: any): any[] {
 function normaliseItem(raw: any): DropDownItem {
   if (raw === null || raw === undefined) return { id: null, name: '' };
   if (typeof raw === 'string' || typeof raw === 'number') {
-    return { id: raw, name: String(raw) };
+    return { id: raw, name: String(raw), raw };
   }
   const id =
     raw.id ?? raw.Id ?? raw.ID ?? raw.value ?? raw.Value ?? raw.key ?? raw.Key;
   const name =
     raw.name ?? raw.Name ?? raw.text ?? raw.Text ?? raw.title ?? raw.Title ??
     raw.label ?? raw.Label ?? raw.description ?? raw.Description ?? String(id ?? '');
-  return { id, name: String(name) };
+  return { id, name: String(name), raw };
 }
 
 @Injectable({ providedIn: 'root' })

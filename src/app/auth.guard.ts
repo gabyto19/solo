@@ -33,7 +33,7 @@ export class AdminGuard implements CanActivate {
     return this.auth.ensureLoaded().pipe(
       map((user) => {
         if (user?.role === 'admin') return true;
-        this.router.navigate([user ? '/list' : '/password']);
+        this.router.navigate([user ? '/calculator' : '/password']);
         return false;
       })
     );
