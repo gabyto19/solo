@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { DealerApiService, DropDownItem, CalculatorQuery } from '../services/dealer-api.service';
+import { toStateCode } from '../services/us-states';
 
 /** One line of the rendered result table. */
 interface ResultRow {
@@ -138,14 +139,16 @@ export class CalculatorComponent implements OnInit {
   /**
    * Whether a city sits in the given state.
    *
-   * The API's field names are undocumented, so this reads the signals in order
-   * of how much they can be trusted: an explicit state id on the city, then an
-   * explicit state code or name, and only then the state prefix these lists
-   * conventionally carry in the city name ("NJ-SAYREVILLE").
+   * The API returns cities as a bare label — {"id":16,"name":"AK - Anchorage"}
+   * — with no state field, so the code in the name is the only link. Both
+   * sides are reduced to a state code before comparing, which also covers a
+   * states endpoint that answers with full names rather than codes.
    */
   private cityBelongsToState(city: DropDownItem, state: DropDownItem): boolean {
-    const raw = city.raw;
+    const stateCode = toStateCode(state.name);
+    if (!stateCode) return false;
 
+    const raw = city.raw;
     if (raw && typeof raw === 'object') {
       const stateId = raw.stateId ?? raw.StateId ?? raw.stateID ?? raw.StateID;
       // A city that carries a state id settles the question either way.
@@ -156,24 +159,14 @@ export class CalculatorComponent implements OnInit {
       const stateText =
         raw.state ?? raw.State ?? raw.stateName ?? raw.StateName ??
         raw.stateCode ?? raw.StateCode ?? raw.stateAbbr ?? raw.StateAbbr;
-      if (stateText) return this.sameState(String(stateText), state.name);
+      if (stateText) return toStateCode(String(stateText)) === stateCode;
     }
 
+    // Only a leading two-letter token is a state code; without this a city
+    // such as "WINSTON-SALEM" would offer "WINSTON" as one.
     const prefix = city.name.split(/[-–,(]/)[0].trim();
-    return this.sameState(prefix, state.name);
-  }
-
-  /** Compare two state labels, tolerating a code standing in for a full name. */
-  private sameState(a: string, b: string): boolean {
-    const norm = (v: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    const x = norm(a);
-    const y = norm(b);
-    if (!x || !y) return false;
-    if (x === y) return true;
-    // "NJ" against "NEW JERSEY", or the reverse.
-    if (x.length === 2) return y.startsWith(x);
-    if (y.length === 2) return x.startsWith(y);
-    return false;
+    if (!/^[A-Za-z]{2}$/.test(prefix)) return false;
+    return toStateCode(prefix) === stateCode;
   }
 
   get canCalculate(): boolean {
