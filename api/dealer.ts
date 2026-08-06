@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { allowMethods, requireUser } from './_lib/auth';
+import { applyUserMarkup, isPricedEndpoint, USER_MARKUP_USD } from './_lib/pricing';
 
 const UPSTREAM = 'https://apidealer.payauto.de/api/ApiForDealers';
 
@@ -42,6 +43,34 @@ function resolveEndpoint(req: VercelRequest): string {
   return match ? decodeURIComponent(match[1]) : '';
 }
 
+/**
+ * Add the margin to a price response, returning it re-serialised.
+ *
+ * A body that cannot be parsed, or that carries no field recognisable as the
+ * total, is passed through untouched — the alternative is a margin landing on
+ * some unrelated number. Both outcomes are logged, because an unmarked price
+ * shown to a customer is a billing error, not a cosmetic one, and the log is
+ * the only place it would otherwise be visible.
+ */
+function markUp(text: string, endpoint: string): string {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    console.error(`markup skipped: ${endpoint} did not return JSON`);
+    return text;
+  }
+
+  const { body, applied } = applyUserMarkup(parsed);
+  if (!applied) {
+    console.error(`markup skipped: no total field found in ${endpoint} response`);
+    return text;
+  }
+
+  console.log(`markup applied: +$${USER_MARKUP_USD} on ${endpoint}`);
+  return JSON.stringify(body);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!allowMethods(req, res, ['GET'])) return;
 
@@ -80,7 +109,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const upstream = await fetch(url.toString(), {
       headers: { Accept: 'application/json' },
     });
-    const text = await upstream.text();
+    let text = await upstream.text();
+
+    // Non-administrators are quoted the total plus the house margin. Doing it
+    // here rather than in the page means the unmarked figure never reaches
+    // the browser at all.
+    if (upstream.ok && user.role !== 'admin' && isPricedEndpoint(endpoint)) {
+      text = markUp(text, endpoint);
+    }
 
     res.status(upstream.status);
     res.setHeader('Content-Type', upstream.headers.get('content-type') || 'application/json');
