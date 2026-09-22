@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, hasDatabase, Role } from './_lib/db';
+import { sql, hasDatabase, Role, ensureSchema } from './_lib/db';
 import { allowMethods, hashPassword } from './_lib/auth';
 import { STATES_SEED } from './_lib/states-seed';
 
@@ -61,6 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
       )
     `;
+    await ensureSchema();
     steps.push('schema ready');
 
     // ── Seeded accounts ──────────────────────────────────────────

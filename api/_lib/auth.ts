@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { sql, UserRow, hasAdminRights } from './db';
+import { sql, UserRow, hasAdminRights, ensureSchema } from './db';
 
 const COOKIE_NAME = 'solo_session';
 const SESSION_DAYS = 7;
@@ -126,8 +126,9 @@ export async function getCurrentUser(req: VercelRequest): Promise<UserRow | null
   const uid = Number(claims.uid);
   if (!uid) return null;
 
+  await ensureSchema();
   const rows = (await sql`
-    SELECT id, email, role, is_active, created_at
+    SELECT id, email, role, is_active, created_at, pages
     FROM users WHERE id = ${uid} AND is_active = TRUE
   `) as UserRow[];
   return rows[0] || null;

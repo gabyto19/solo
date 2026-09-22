@@ -10,6 +10,7 @@ export interface ManagedUser {
   role: Role;
   is_active: boolean;
   created_at: string;
+  pages: string[];
 }
 
 export interface PriceState {
@@ -39,7 +40,7 @@ export class AdminService {
 
   updateUser(
     id: number,
-    changes: { password?: string; role?: Role; is_active?: boolean }
+    changes: { password?: string; role?: Role; is_active?: boolean; pages?: string[] }
   ): Observable<ManagedUser> {
     return this.http
       .patch<{ user: ManagedUser }>(`/api/users/${id}`, changes)

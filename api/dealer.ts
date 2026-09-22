@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { allowMethods, requireUser } from './_lib/auth';
-import { hasAdminRights } from './_lib/db';
+import { hasAdminRights, canAccessPage } from './_lib/db';
 import { isPricedEndpoint, quoteForUser, USER_MARKUP_USD } from './_lib/pricing';
 
 const UPSTREAM = 'https://apidealer.payauto.de/api/ApiForDealers';
@@ -80,6 +80,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // accounts the administrator created.
   const user = await requireUser(req, res);
   if (!user) return;
+  // The proxy only serves the calculator, so it follows that page's permission.
+  if (!canAccessPage(user, 'calculator')) {
+    res.status(403).json({ error: 'კალკულატორზე წვდომა არ გაქვთ.' });
+    return;
+  }
 
   const endpoint = resolveEndpoint(req);
   if (!ALLOWED.has(endpoint)) {

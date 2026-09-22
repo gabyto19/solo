@@ -66,6 +66,45 @@ export interface UserRow {
   role: Role;
   is_active: boolean;
   created_at: string;
+  /** Page keys a `user` may open; administrators and developers open every page. */
+  pages: string[];
+}
+
+/** What a new account may open until an administrator grants more. */
+export const DEFAULT_PAGES = ['calculator'];
+
+/** Page keys are short slugs chosen by the frontend's page registry. */
+export function isValidPageKey(key: unknown): key is string {
+  return typeof key === 'string' && /^[a-z0-9-]{1,40}$/.test(key);
+}
+
+export function canAccessPage(user: Pick<UserRow, 'role' | 'pages'>, page: string): boolean {
+  return hasAdminRights(user.role) || (user.pages || []).includes(page);
+}
+
+let schemaReady: Promise<void> | null = null;
+
+/**
+ * Add columns introduced after the first migration, once per cold start.
+ *
+ * Without this, deploying code that reads `users.pages` before anyone re-runs
+ * the migration would break every sign-in until they did. The statement is a
+ * no-op once the column exists. A failure is not cached, so the next request
+ * retries.
+ */
+export function ensureSchema(): Promise<void> {
+  if (!schemaReady) {
+    schemaReady = (async () => {
+      await sql`
+        ALTER TABLE users
+        ADD COLUMN IF NOT EXISTS pages TEXT[] NOT NULL DEFAULT ARRAY['calculator']::text[]
+      `;
+    })().catch((err) => {
+      schemaReady = null;
+      throw err;
+    });
+  }
+  return schemaReady;
 }
 
 export interface StateRow {

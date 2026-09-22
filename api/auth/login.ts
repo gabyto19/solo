@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, describeServerError } from '../_lib/db';
+import { sql, describeServerError, ensureSchema } from '../_lib/db';
 import {
   allowMethods,
   createSessionToken,
@@ -19,8 +19,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    await ensureSchema();
     const rows = (await sql`
-      SELECT id, email, password_hash, role, is_active
+      SELECT id, email, password_hash, role, is_active, pages
       FROM users WHERE email = ${email}
     `) as any[];
     const user = rows[0];
@@ -36,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const token = await createSessionToken({ id: user.id, role: user.role });
     setSessionCookie(res, token);
     res.status(200).json({
-      user: { id: user.id, email: user.email, role: user.role },
+      user: { id: user.id, email: user.email, role: user.role, pages: user.pages },
     });
   } catch (err: any) {
     console.error('login failed:', err);

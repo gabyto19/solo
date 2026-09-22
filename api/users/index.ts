@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, UserRow, Role, describeServerError } from '../_lib/db';
+import { sql, UserRow, Role, describeServerError, isValidPageKey } from '../_lib/db';
 import { allowMethods, hashPassword, requireAdmin } from '../_lib/auth';
 
 /**
@@ -39,11 +39,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'GET') {
       const users = (isDeveloper
         ? await sql`
-            SELECT id, email, role, is_active, created_at
+            SELECT id, email, role, is_active, created_at, pages
             FROM users ORDER BY created_at ASC
           `
         : await sql`
-            SELECT id, email, role, is_active, created_at
+            SELECT id, email, role, is_active, created_at, pages
             FROM users WHERE role <> 'developer' ORDER BY created_at ASC
           `) as UserRow[];
       res.status(200).json({ users });
@@ -78,7 +78,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const rows = (await sql`
         INSERT INTO users (email, password_hash, role)
         VALUES (${email}, ${hash}, ${role})
-        RETURNING id, email, role, is_active, created_at
+        RETURNING id, email, role, is_active, created_at, pages
       `) as UserRow[];
 
       res.status(201).json({ user: rows[0] });
@@ -115,7 +115,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    const { password, role, is_active } = req.body || {};
+    const { password, role, is_active, pages } = req.body || {};
     const nextRole = role !== undefined ? parseRole(role) : undefined;
 
     // Validate everything before writing anything, so a rejected request
@@ -132,6 +132,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.status(400).json({ error: 'საკუთარი როლის შეცვლა შეუძლებელია.' });
       return;
     }
+    if (
+      pages !== undefined &&
+      (!Array.isArray(pages) || pages.length > 50 || !pages.every(isValidPageKey))
+    ) {
+      res.status(400).json({ error: 'გვერდების სია არასწორია.' });
+      return;
+    }
     if (is_active !== undefined && id === admin.id && !is_active) {
       res.status(400).json({ error: 'საკუთარი ანგარიშის გათიშვა შეუძლებელია.' });
       return;
@@ -144,12 +151,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (nextRole !== undefined) {
       await sql`UPDATE users SET role = ${nextRole} WHERE id = ${id}`;
     }
+    if (pages !== undefined) {
+      const unique = [...new Set(pages as string[])];
+      await sql`UPDATE users SET pages = ${unique}::text[] WHERE id = ${id}`;
+    }
     if (is_active !== undefined) {
       await sql`UPDATE users SET is_active = ${!!is_active} WHERE id = ${id}`;
     }
 
     const rows = (await sql`
-      SELECT id, email, role, is_active, created_at FROM users WHERE id = ${id}
+      SELECT id, email, role, is_active, created_at, pages FROM users WHERE id = ${id}
     `) as UserRow[];
     if (!rows.length) {
       res.status(404).json({ error: NOT_FOUND });

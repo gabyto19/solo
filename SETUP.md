@@ -106,8 +106,18 @@ npx vercel dev
 | Route | Access |
 | --- | --- |
 | `/password` | public — the login page |
-| `/list`, `/calculator`, `/deposit`, `/vehicle` | any signed-in user |
-| `/admin` | administrators only |
+| `/calculator`, `/deposit`, `/vehicle` | administrators and developers always; ordinary users only when granted |
+| `/admin` | administrators and developers only |
+
+A new account may open only the calculator. An administrator grants more from
+the **გვერდები** dropdown in the user list: tick the pages and press
+**შენახვა**. The calculator's dealer API follows the same grant, so a user
+without the calculator cannot call it either.
+
+To add a page, add one entry to `PAGES` in `src/app/pages.ts`. The route, the
+menu link and the admin dropdown are all built from that list. The entry's
+`key` is its URL and the value stored in each user's grants, so never rename a
+key that is in use.
 
 Both layers are enforced: the Angular guards decide what to render, and every
 `api/` handler independently re-checks the session, so a crafted request cannot

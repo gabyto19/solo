@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { HOME_PAGE, PAGES } from '../pages';
 
 /** `developer` has every administrator right and is hidden from administrators. */
 export type Role = 'admin' | 'user' | 'developer';
@@ -14,6 +15,8 @@ export interface CurrentUser {
   id: number;
   email: string;
   role: Role;
+  /** Page keys this account may open; ignored for administrators, who open all. */
+  pages: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -36,6 +39,19 @@ export class AuthService {
 
   get isDeveloper(): boolean {
     return this.userSubject.value?.role === 'developer';
+  }
+
+  /** Whether the signed-in account may open the page with this key. */
+  canAccess(page: string): boolean {
+    const user = this.userSubject.value;
+    return !!user && (hasAdminRights(user.role) || (user.pages || []).includes(page));
+  }
+
+  /** Where to send this account by default: the home page, else the first it may open. */
+  homePath(): string | null {
+    if (this.canAccess(HOME_PAGE)) return `/${HOME_PAGE}`;
+    const page = PAGES.find((p) => this.canAccess(p.key));
+    return page ? `/${page.key}` : null;
   }
 
   /**

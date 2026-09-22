@@ -29,8 +29,16 @@ export class PasswordComponent {
     // browser. The session comes back as an HttpOnly cookie the page cannot read.
     this.auth.login(email, this.password).subscribe({
       next: () => {
+        const home = this.auth.homePath();
+        if (!home) {
+          // Signed in, but granted no page at all — there is nowhere to go.
+          this.auth.logout().subscribe({ error: () => undefined });
+          this.submitting = false;
+          this.errorMessage = 'არცერთ გვერდზე წვდომა არ გაქვთ. მიმართეთ ადმინისტრატორს.';
+          return;
+        }
         this.submitting = false;
-        this.router.navigate(['/calculator']);
+        this.router.navigate([home]);
       },
       error: (err) => {
         this.submitting = false;

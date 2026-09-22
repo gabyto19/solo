@@ -10,7 +10,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Not being signed in is a normal state for this endpoint, not an error —
     // the app calls it on boot to decide what to render.
     res.status(200).json({
-      user: user ? { id: user.id, email: user.email, role: user.role } : null,
+      user: user ? { id: user.id, email: user.email, role: user.role, pages: user.pages } : null,
     });
   } catch (err: any) {
     console.error('me failed:', err);

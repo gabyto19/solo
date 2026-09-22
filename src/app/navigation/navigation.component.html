@@ -1,13 +1,13 @@
-<a class="brand" routerLink="/calculator">
+<a class="brand" [routerLink]="auth.homePath() || '/password'">
   <img src="/assets/imgs/logo.png" alt="Solo Auto Import" />
 </a>
 
 <ng-container *ngIf="auth.user$ | async as user">
-  <!-- Desktop links. Only the calculator is offered to the `user` role. -->
+  <!-- Desktop links: every page from pages.ts this account was granted. -->
   <div class="menu-container">
-    <a routerLink="/deposit" routerLinkActive="active" *ngIf="auth.isAdmin">დეპოზიტი</a>
-    <a routerLink="/vehicle" routerLinkActive="active" *ngIf="auth.isAdmin">საფასური</a>
-    <a routerLink="/calculator" routerLinkActive="active">კალკულატორი</a>
+    <ng-container *ngFor="let page of pages">
+      <a [routerLink]="'/' + page.key" routerLinkActive="active" *ngIf="auth.canAccess(page.key)">{{ page.label }}</a>
+    </ng-container>
     <a routerLink="/admin" routerLinkActive="active" *ngIf="auth.isAdmin">ადმინი</a>
     <button type="button" class="logout" (click)="logout()">გასვლა</button>
   </div>
@@ -27,9 +27,9 @@
 
   <!-- Mobile drawer -->
   <div class="mobile-menu" [class.active]="menuOpen">
-    <a routerLink="/deposit" (click)="closeMenu()" *ngIf="auth.isAdmin">დეპოზიტი</a>
-    <a routerLink="/vehicle" (click)="closeMenu()" *ngIf="auth.isAdmin">საფასური</a>
-    <a routerLink="/calculator" (click)="closeMenu()">კალკულატორი</a>
+    <ng-container *ngFor="let page of pages">
+      <a [routerLink]="'/' + page.key" (click)="closeMenu()" *ngIf="auth.canAccess(page.key)">{{ page.label }}</a>
+    </ng-container>
     <a routerLink="/admin" (click)="closeMenu()" *ngIf="auth.isAdmin">ადმინი</a>
     <button type="button" class="logout" (click)="logout()">გასვლა</button>
   </div>

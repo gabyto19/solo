@@ -42,6 +42,7 @@
           <th>ელფოსტა</th>
           <th>როლი</th>
           <th>სტატუსი</th>
+          <th>გვერდები</th>
           <th>მოქმედება</th>
         </tr>
         <tr *ngFor="let u of users">
@@ -51,6 +52,35 @@
             <span class="status" [class.inactive]="!u.is_active">
               {{ u.is_active ? 'აქტიური' : 'გათიშული' }}
             </span>
+          </td>
+          <td class="pages-cell">
+            <span *ngIf="hasAllPages(u)" class="hint">ყველა გვერდი</span>
+            <details
+              *ngIf="!hasAllPages(u)"
+              #dropdown
+              class="pages-dropdown"
+              (toggle)="onPagesToggle(u, dropdown.open)"
+            >
+              <summary>{{ pagesSummary(u) }}</summary>
+              <div class="pages-panel">
+                <label *ngFor="let page of pages" class="page-option">
+                  <input
+                    type="checkbox"
+                    [checked]="isPageChecked(u, page.key)"
+                    (change)="togglePage(u, page.key, $any($event.target).checked)"
+                  />
+                  {{ page.label }}
+                </label>
+                <button
+                  type="button"
+                  class="small"
+                  [disabled]="savingPagesId === u.id"
+                  (click)="savePages(u, dropdown)"
+                >
+                  {{ savingPagesId === u.id ? 'ინახება…' : 'შენახვა' }}
+                </button>
+              </div>
+            </details>
           </td>
           <td class="row-actions">
             <button type="button" class="secondary small" (click)="toggleActive(u)">

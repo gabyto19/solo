@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService, ManagedUser, PriceState } from '../services/admin.service';
-import { AuthService, Role } from '../services/auth.service';
+import { AuthService, Role, hasAdminRights } from '../services/auth.service';
+import { PAGES } from '../pages';
 
 @Component({
   selector: 'app-admin',
@@ -18,6 +19,12 @@ export class AdminComponent implements OnInit {
   newPassword = '';
   newRole: Role = 'user';
   creating = false;
+
+  /** Every grantable page, for the per-user permission dropdown. */
+  readonly pages = PAGES;
+  /** Unsaved checkbox state per user id, created when their dropdown opens. */
+  pageDraft: Record<number, string[]> = {};
+  savingPagesId: number | null = null;
 
   // Price list
   states: PriceState[] = [];
@@ -106,6 +113,54 @@ export class AdminComponent implements OnInit {
         this.notice = `წაშლილია: ${user.email}`;
       },
       error: (err) => (this.error = this.describe(err)),
+    });
+  }
+
+  // ── Page permissions ──────────────────────────────────────────
+
+  /** Administrators and developers open every page; only users are granted pages. */
+  hasAllPages(user: ManagedUser): boolean {
+    return hasAdminRights(user.role);
+  }
+
+  pagesSummary(user: ManagedUser): string {
+    const granted = this.pages.filter((p) => (user.pages || []).includes(p.key));
+    return granted.length ? granted.map((p) => p.label).join(', ') : 'არცერთი';
+  }
+
+  /** Start the draft from the saved list each time the dropdown opens. */
+  onPagesToggle(user: ManagedUser, open: boolean): void {
+    if (open) this.pageDraft[user.id] = [...(user.pages || [])];
+  }
+
+  isPageChecked(user: ManagedUser, key: string): boolean {
+    return (this.pageDraft[user.id] || []).includes(key);
+  }
+
+  togglePage(user: ManagedUser, key: string, checked: boolean): void {
+    const draft = (this.pageDraft[user.id] || []).filter((k) => k !== key);
+    this.pageDraft[user.id] = checked ? [...draft, key] : draft;
+  }
+
+  savePages(user: ManagedUser, dropdown: HTMLDetailsElement): void {
+    // Keys no longer in the registry are dropped along the way.
+    const pages = this.pages
+      .map((p) => p.key)
+      .filter((key) => this.isPageChecked(user, key));
+
+    this.savingPagesId = user.id;
+    this.error = '';
+    this.admin.updateUser(user.id, { pages }).subscribe({
+      next: (updated) => {
+        this.replaceUser(updated);
+        this.savingPagesId = null;
+        dropdown.open = false;
+        this.notice = `გვერდები განახლდა: ${updated.email}`;
+      },
+      error: (err) => {
+        this.error = this.describe(err);
+        this.savingPagesId = null;
+      },
     });
   }
 

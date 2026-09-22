@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { PAGES } from '../pages';
 
 @Component({
   selector: 'app-navigation',
@@ -9,6 +10,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class NavigationComponent {
   menuOpen = false;
+  readonly pages = PAGES;
 
   constructor(public auth: AuthService, private router: Router) {}
 
