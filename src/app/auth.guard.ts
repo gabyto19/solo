@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AuthService } from './services/auth.service';
+import { AuthService, hasAdminRights } from './services/auth.service';
 
 /**
  * Gate on the server-issued session rather than a flag in sessionStorage.
@@ -32,7 +32,7 @@ export class AdminGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.auth.ensureLoaded().pipe(
       map((user) => {
-        if (user?.role === 'admin') return true;
+        if (hasAdminRights(user?.role)) return true;
         this.router.navigate([user ? '/calculator' : '/password']);
         return false;
       })

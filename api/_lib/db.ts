@@ -48,10 +48,22 @@ function getClient(): NeonQueryFunction<false, false> {
 export const sql = ((strings: TemplateStringsArray, ...values: unknown[]) =>
   (getClient() as any)(strings, ...values)) as NeonQueryFunction<false, false>;
 
+/**
+ * `developer` has every administrator right, and is additionally invisible to
+ * administrators: they cannot list, edit, deactivate or delete it. It is only
+ * ever created by the migration, from DEVELOPER_EMAIL / DEVELOPER_PASSWORD.
+ */
+export type Role = 'admin' | 'user' | 'developer';
+
+/** Whether a role may use the administrator pages and APIs. */
+export function hasAdminRights(role: string): boolean {
+  return role === 'admin' || role === 'developer';
+}
+
 export interface UserRow {
   id: number;
   email: string;
-  role: 'admin' | 'user';
+  role: Role;
   is_active: boolean;
   created_at: string;
 }

@@ -22,6 +22,7 @@
         <select id="newRole" name="newRole" [(ngModel)]="newRole">
           <option value="user">მომხმარებელი</option>
           <option value="admin">ადმინისტრატორი</option>
+          <option value="developer" *ngIf="auth.isDeveloper">დეველოპერი</option>
         </select>
       </div>
       <button type="submit" [disabled]="creating">
@@ -45,7 +46,7 @@
         </tr>
         <tr *ngFor="let u of users">
           <td>{{ u.email }}</td>
-          <td>{{ u.role === 'admin' ? 'ადმინი' : 'მომხმარებელი' }}</td>
+          <td>{{ roleLabel(u.role) }}</td>
           <td>
             <span class="status" [class.inactive]="!u.is_active">
               {{ u.is_active ? 'აქტიური' : 'გათიშული' }}
@@ -55,7 +56,7 @@
             <button type="button" class="secondary small" (click)="toggleActive(u)">
               {{ u.is_active ? 'გათიშვა' : 'ჩართვა' }}
             </button>
-            <button type="button" class="secondary small" (click)="toggleRole(u)">
+            <button type="button" class="secondary small" *ngIf="u.role !== 'developer'" (click)="toggleRole(u)">
               {{ u.role === 'admin' ? 'ადმინის მოხსნა' : 'ადმინად დანიშვნა' }}
             </button>
             <button type="button" class="secondary small" (click)="resetPassword(u)">პაროლი</button>

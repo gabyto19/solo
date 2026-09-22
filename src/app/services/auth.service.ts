@@ -3,10 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
+/** `developer` has every administrator right and is hidden from administrators. */
+export type Role = 'admin' | 'user' | 'developer';
+
+export function hasAdminRights(role: Role | undefined): boolean {
+  return role === 'admin' || role === 'developer';
+}
+
 export interface CurrentUser {
   id: number;
   email: string;
-  role: 'admin' | 'user';
+  role: Role;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,7 +31,11 @@ export class AuthService {
   }
 
   get isAdmin(): boolean {
-    return this.userSubject.value?.role === 'admin';
+    return hasAdminRights(this.userSubject.value?.role);
+  }
+
+  get isDeveloper(): boolean {
+    return this.userSubject.value?.role === 'developer';
   }
 
   /**

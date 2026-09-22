@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from './auth.service';
 
 export interface ManagedUser {
   id: number;
   email: string;
-  role: 'admin' | 'user';
+  role: Role;
   is_active: boolean;
   created_at: string;
 }
@@ -30,7 +31,7 @@ export class AdminService {
       .pipe(map((r) => r.users));
   }
 
-  createUser(email: string, password: string, role: 'admin' | 'user'): Observable<ManagedUser> {
+  createUser(email: string, password: string, role: Role): Observable<ManagedUser> {
     return this.http
       .post<{ user: ManagedUser }>('/api/users', { email, password, role })
       .pipe(map((r) => r.user));
@@ -38,7 +39,7 @@ export class AdminService {
 
   updateUser(
     id: number,
-    changes: { password?: string; role?: 'admin' | 'user'; is_active?: boolean }
+    changes: { password?: string; role?: Role; is_active?: boolean }
   ): Observable<ManagedUser> {
     return this.http
       .patch<{ user: ManagedUser }>(`/api/users/${id}`, changes)

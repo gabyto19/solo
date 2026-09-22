@@ -5,10 +5,10 @@
 <ng-container *ngIf="auth.user$ | async as user">
   <!-- Desktop links. Only the calculator is offered to the `user` role. -->
   <div class="menu-container">
-    <a routerLink="/deposit" routerLinkActive="active" *ngIf="user.role === 'admin'">დეპოზიტი</a>
-    <a routerLink="/vehicle" routerLinkActive="active" *ngIf="user.role === 'admin'">საფასური</a>
+    <a routerLink="/deposit" routerLinkActive="active" *ngIf="auth.isAdmin">დეპოზიტი</a>
+    <a routerLink="/vehicle" routerLinkActive="active" *ngIf="auth.isAdmin">საფასური</a>
     <a routerLink="/calculator" routerLinkActive="active">კალკულატორი</a>
-    <a routerLink="/admin" routerLinkActive="active" *ngIf="user.role === 'admin'">ადმინი</a>
+    <a routerLink="/admin" routerLinkActive="active" *ngIf="auth.isAdmin">ადმინი</a>
     <button type="button" class="logout" (click)="logout()">გასვლა</button>
   </div>
 
@@ -27,10 +27,10 @@
 
   <!-- Mobile drawer -->
   <div class="mobile-menu" [class.active]="menuOpen">
-    <a routerLink="/deposit" (click)="closeMenu()" *ngIf="user.role === 'admin'">დეპოზიტი</a>
-    <a routerLink="/vehicle" (click)="closeMenu()" *ngIf="user.role === 'admin'">საფასური</a>
+    <a routerLink="/deposit" (click)="closeMenu()" *ngIf="auth.isAdmin">დეპოზიტი</a>
+    <a routerLink="/vehicle" (click)="closeMenu()" *ngIf="auth.isAdmin">საფასური</a>
     <a routerLink="/calculator" (click)="closeMenu()">კალკულატორი</a>
-    <a routerLink="/admin" (click)="closeMenu()" *ngIf="user.role === 'admin'">ადმინი</a>
+    <a routerLink="/admin" (click)="closeMenu()" *ngIf="auth.isAdmin">ადმინი</a>
     <button type="button" class="logout" (click)="logout()">გასვლა</button>
   </div>
 </ng-container>

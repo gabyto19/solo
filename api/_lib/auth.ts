@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { sql, UserRow } from './db';
+import { sql, UserRow, hasAdminRights } from './db';
 
 const COOKIE_NAME = 'solo_session';
 const SESSION_DAYS = 7;
@@ -151,7 +151,7 @@ export async function requireAdmin(
 ): Promise<UserRow | null> {
   const user = await requireUser(req, res);
   if (!user) return null;
-  if (user.role !== 'admin') {
+  if (!hasAdminRights(user.role)) {
     res.status(403).json({ error: 'საჭიროა ადმინისტრატორის უფლება.' });
     return null;
   }
