@@ -26,7 +26,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   let database: Record<string, unknown> = { reachable: false };
   if (env.DATABASE_URL) {
     try {
-      const users = (await sql`SELECT COUNT(*)::int AS n FROM users`) as any[];
+      const users = (await sql`SELECT COUNT(*)::int AS n FROM users WHERE role <> 'developer'`) as any[];
       const states = (await sql`SELECT COUNT(*)::int AS n FROM states`) as any[];
       database = {
         reachable: true,

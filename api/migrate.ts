@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, hasDatabase } from './_lib/db';
+import { sql, hasDatabase, Role } from './_lib/db';
 import { allowMethods, hashPassword } from './_lib/auth';
 import { STATES_SEED } from './_lib/states-seed';
 
@@ -63,25 +63,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     `;
     steps.push('schema ready');
 
-    // ── Administrator ────────────────────────────────────────────
+    // ── Seeded accounts ──────────────────────────────────────────
     const adminEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
-    const adminPassword = String(process.env.ADMIN_PASSWORD || '');
+    steps.push(await seedAccount('admin', adminEmail, process.env.ADMIN_PASSWORD));
 
-    if (!adminEmail || !adminPassword) {
-      steps.push('admin skipped — ADMIN_EMAIL / ADMIN_PASSWORD not set');
-    } else if (adminPassword.length < 8) {
-      steps.push('admin skipped — ADMIN_PASSWORD shorter than 8 characters');
+    // The developer account is optional. It is invisible to administrators,
+    // which is why it can only come from here and not from the admin page.
+    const developerEmail = String(process.env.DEVELOPER_EMAIL || '').trim().toLowerCase();
+    if (developerEmail && developerEmail === adminEmail) {
+      steps.push('developer skipped — DEVELOPER_EMAIL must differ from ADMIN_EMAIL');
     } else {
-      const hash = await hashPassword(adminPassword);
-      // Existing admin keeps its current password; only the role is re-asserted,
-      // so re-running never silently resets a password that was changed in-app.
-      const rows = (await sql`
-        INSERT INTO users (email, password_hash, role)
-        VALUES (${adminEmail}, ${hash}, 'admin')
-        ON CONFLICT (email) DO UPDATE SET role = 'admin', is_active = TRUE
-        RETURNING id, (xmax = 0) AS inserted
-      `) as any[];
-      steps.push(rows[0]?.inserted ? `admin created: ${adminEmail}` : `admin already existed: ${adminEmail}`);
+      steps.push(await seedAccount('developer', developerEmail, process.env.DEVELOPER_PASSWORD));
     }
 
     // ── Price list ───────────────────────────────────────────────
@@ -106,4 +98,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('migration failed:', err);
     res.status(500).json({ error: String(err?.message || err), steps });
   }
+}
+
+/**
+ * Create an account from environment variables, or re-assert the role of one
+ * that already exists. An existing account keeps its current password, so
+ * re-running never silently resets a password that was changed in-app.
+ */
+async function seedAccount(
+  role: Role,
+  email: string,
+  password: string | undefined
+): Promise<string> {
+  const prefix = role.toUpperCase();
+  if (!email || !password) {
+    return `${role} skipped — ${prefix}_EMAIL / ${prefix}_PASSWORD not set`;
+  }
+  if (password.length < 8) {
+    return `${role} skipped — ${prefix}_PASSWORD shorter than 8 characters`;
+  }
+
+  const hash = await hashPassword(password);
+  const rows = (await sql`
+    INSERT INTO users (email, password_hash, role)
+    VALUES (${email}, ${hash}, ${role})
+    ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, is_active = TRUE
+    RETURNING id, (xmax = 0) AS inserted
+  `) as any[];
+  return rows[0]?.inserted ? `${role} created: ${email}` : `${role} already existed: ${email}`;
 }

@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { allowMethods, requireUser } from './_lib/auth';
+import { hasAdminRights } from './_lib/db';
 import { isPricedEndpoint, quoteForUser, USER_MARKUP_USD } from './_lib/pricing';
 
 const UPSTREAM = 'https://apidealer.payauto.de/api/ApiForDealers';
@@ -115,7 +116,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Non-administrators are quoted the total plus the house margin, and
     // nothing else. Doing it here rather than in the page means neither the
     // unmarked figure nor the breakdown behind it reaches the browser at all.
-    if (upstream.ok && user.role !== 'admin' && isPricedEndpoint(endpoint)) {
+    if (upstream.ok && !hasAdminRights(user.role) && isPricedEndpoint(endpoint)) {
       text = quote(text, endpoint);
     }
 

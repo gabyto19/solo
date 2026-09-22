@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { sql, UserRow, describeServerError } from '../_lib/db';
+import { sql, UserRow, Role, describeServerError } from '../_lib/db';
 import { allowMethods, hashPassword, requireAdmin } from '../_lib/auth';
 
 /**
@@ -17,6 +17,13 @@ function targetId(req: VercelRequest): number {
   return match ? Number(match[1]) : 0;
 }
 
+/** Parse a requested role; anything unrecognised is an ordinary user. */
+function parseRole(value: unknown): Role {
+  return value === 'admin' || value === 'developer' ? value : 'user';
+}
+
+const NOT_FOUND = 'მომხმარებელი ვერ მოიძებნა.';
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!allowMethods(req, res, ['GET', 'POST', 'PATCH', 'DELETE'])) return;
 
@@ -24,12 +31,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const admin = await requireAdmin(req, res);
   if (!admin) return;
 
+  // Developer accounts exist only for other developers. To an administrator
+  // they are absent: not listed, and reported as not found when addressed.
+  const isDeveloper = admin.role === 'developer';
+
   try {
     if (req.method === 'GET') {
-      const users = (await sql`
-        SELECT id, email, role, is_active, created_at
-        FROM users ORDER BY created_at ASC
-      `) as UserRow[];
+      const users = (isDeveloper
+        ? await sql`
+            SELECT id, email, role, is_active, created_at
+            FROM users ORDER BY created_at ASC
+          `
+        : await sql`
+            SELECT id, email, role, is_active, created_at
+            FROM users WHERE role <> 'developer' ORDER BY created_at ASC
+          `) as UserRow[];
       res.status(200).json({ users });
       return;
     }
@@ -37,7 +53,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'POST') {
       const email = String(req.body?.email || '').trim().toLowerCase();
       const password = String(req.body?.password || '');
-      const role = req.body?.role === 'admin' ? 'admin' : 'user';
+      const role = parseRole(req.body?.role);
 
       if (!email || !email.includes('@')) {
         res.status(400).json({ error: 'შეიყვანეთ სწორი ელფოსტა.' });
@@ -45,6 +61,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       if (password.length < 8) {
         res.status(400).json({ error: 'პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო.' });
+        return;
+      }
+      if (role === 'developer' && !isDeveloper) {
+        res.status(403).json({ error: 'ამ როლის მინიჭება შეუძლებელია.' });
         return;
       }
 
@@ -72,6 +92,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
+    const targets = (await sql`SELECT role FROM users WHERE id = ${id}`) as { role: Role }[];
+    const target = targets[0];
+    if (!target || (target.role === 'developer' && !isDeveloper)) {
+      res.status(404).json({ error: NOT_FOUND });
+      return;
+    }
+
     // Guard against an administrator locking themselves out of their own account.
     if (id === admin.id && req.method === 'DELETE') {
       res.status(400).json({ error: 'საკუთარი ანგარიშის წაშლა შეუძლებელია.' });
@@ -81,7 +108,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method === 'DELETE') {
       const rows = (await sql`DELETE FROM users WHERE id = ${id} RETURNING id`) as any[];
       if (!rows.length) {
-        res.status(404).json({ error: 'მომხმარებელი ვერ მოიძებნა.' });
+        res.status(404).json({ error: NOT_FOUND });
         return;
       }
       res.status(200).json({ ok: true });
@@ -89,30 +116,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const { password, role, is_active } = req.body || {};
+    const nextRole = role !== undefined ? parseRole(role) : undefined;
+
+    // Validate everything before writing anything, so a rejected request
+    // never leaves the account half-updated.
+    if (password !== undefined && String(password).length < 8) {
+      res.status(400).json({ error: 'პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო.' });
+      return;
+    }
+    if (nextRole === 'developer' && !isDeveloper) {
+      res.status(403).json({ error: 'ამ როლის მინიჭება შეუძლებელია.' });
+      return;
+    }
+    if (nextRole !== undefined && id === admin.id && nextRole !== admin.role) {
+      res.status(400).json({ error: 'საკუთარი როლის შეცვლა შეუძლებელია.' });
+      return;
+    }
+    if (is_active !== undefined && id === admin.id && !is_active) {
+      res.status(400).json({ error: 'საკუთარი ანგარიშის გათიშვა შეუძლებელია.' });
+      return;
+    }
 
     if (password !== undefined) {
-      if (String(password).length < 8) {
-        res.status(400).json({ error: 'პაროლი უნდა იყოს მინიმუმ 8 სიმბოლო.' });
-        return;
-      }
       const hash = await hashPassword(String(password));
       await sql`UPDATE users SET password_hash = ${hash} WHERE id = ${id}`;
     }
-
-    if (role !== undefined) {
-      const next = role === 'admin' ? 'admin' : 'user';
-      if (id === admin.id && next !== 'admin') {
-        res.status(400).json({ error: 'საკუთარი ადმინის უფლების მოხსნა შეუძლებელია.' });
-        return;
-      }
-      await sql`UPDATE users SET role = ${next} WHERE id = ${id}`;
+    if (nextRole !== undefined) {
+      await sql`UPDATE users SET role = ${nextRole} WHERE id = ${id}`;
     }
-
     if (is_active !== undefined) {
-      if (id === admin.id && !is_active) {
-        res.status(400).json({ error: 'საკუთარი ანგარიშის გათიშვა შეუძლებელია.' });
-        return;
-      }
       await sql`UPDATE users SET is_active = ${!!is_active} WHERE id = ${id}`;
     }
 
@@ -120,7 +152,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       SELECT id, email, role, is_active, created_at FROM users WHERE id = ${id}
     `) as UserRow[];
     if (!rows.length) {
-      res.status(404).json({ error: 'მომხმარებელი ვერ მოიძებნა.' });
+      res.status(404).json({ error: NOT_FOUND });
       return;
     }
     res.status(200).json({ user: rows[0] });

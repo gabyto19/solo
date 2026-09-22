@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService, ManagedUser, PriceState } from '../services/admin.service';
-import { AuthService } from '../services/auth.service';
+import { AuthService, Role } from '../services/auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -16,7 +16,7 @@ export class AdminComponent implements OnInit {
   // New-user form
   newEmail = '';
   newPassword = '';
-  newRole: 'admin' | 'user' = 'user';
+  newRole: Role = 'user';
   creating = false;
 
   // Price list
@@ -78,7 +78,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  /** Switches between admin and user; a developer's role is not toggled here. */
   toggleRole(user: ManagedUser): void {
+    if (user.role === 'developer') return;
     this.admin
       .updateUser(user.id, { role: user.role === 'admin' ? 'user' : 'admin' })
       .subscribe({
@@ -105,6 +107,11 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => (this.error = this.describe(err)),
     });
+  }
+
+  roleLabel(role: Role): string {
+    if (role === 'developer') return 'დეველოპერი';
+    return role === 'admin' ? 'ადმინი' : 'მომხმარებელი';
   }
 
   private replaceUser(updated: ManagedUser): void {
